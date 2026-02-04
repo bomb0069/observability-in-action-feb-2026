@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  # Flog - Fake log generator (Source)
+  flog:
+    image: mingrammer/flog
+    container_name: flog
+    command: -f apache_combined -t log -w -o /logs/access.log -l -d 1 -s 1
+    volumes:
+      - ./logs:/logs
+    networks:
+      - elastic
+
+  # Filebeat - Log shipper (Collector)
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/logs:ro
+    command: filebeat -e -strict.perms=false
+    depends_on:
+      - logstash
+      - elasticsearch
+    networks:
+      - elastic
+
+  # Logstash - Log processing (Processor)
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  # Elasticsearch - Log storage (Storage)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elastic
+
+  # Kibana - Visualization (Presentation)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    volumes:
+      - ./kibana/saved_objects.ndjson:/usr/share/kibana/config/saved_objects.ndjson:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  # Kibana Dashboard Importer (Initialization)
+  kibana-setup:
+    image: curlimages/curl:latest
+    container_name: kibana-setup
+    volumes:
+      - ./kibana/import-dashboard.sh:/import-dashboard.sh:ro
+      - ./kibana/saved_objects.ndjson:/usr/share/kibana/config/saved_objects.ndjson:ro
+    command: sh /import-dashboard.sh
+    depends_on:
+      - kibana
+    networks:
+      - elastic
+    restart: on-failure
+
+networks:
+  elastic:
+    driver: bridge
