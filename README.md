@@ -30,6 +30,7 @@ docker-compose down
 Labs ออกแบบให้เรียนรู้แบบ progressive:
 
 **ELK Stack (Labs 03-08):**
+
 1. **Lab03**: เริ่มต้นกับ basic ELK stack
 2. **Lab04**: เพิ่ม visualizations และ dashboards
 3. **Lab05**: เพิ่ม multiple applications กับ different log formats
@@ -37,8 +38,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 5. **Lab07**: รวม applications ใน unified dashboard (separate visualizations)
 6. **Lab08**: รวม applications ใน unified visualizations (same charts with split series)
 
-**LGTM Stack (Labs 09+):**
-7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail)
+**LGTM Stack (Labs 09+):** 7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail) 8. **Lab10**: Unified multi-application logs with LGTM stack (split series)
 
 ## Labs Overview
 
@@ -147,3 +147,22 @@ Lab สำหรับสร้าง visualizations และ dashboards บน
 - Anonymous authentication (ไม่ต้อง login)
 - Timezone support: Asia/Bangkok (UTC+7)
 - เหมาะสำหรับเปรียบเทียบ LGTM vs ELK Stack
+
+---
+
+### [Lab10 - Unified Multi-Application Logs with LGTM Stack](lab10/)
+
+Lab สำหรับรวม logs จาก multiple applications (Apache และ JSON format) และแสดงใน **visualizations เดียวกัน** บน Grafana โดยใช้ LGTM Stack พร้อม split series aggregation
+
+**Key Features:**
+
+- ✨ Unified Visualizations with LGTM Stack
+- รองรับ 2 applications พร้อมกัน:
+  - Flog: Apache combined format (1 log/sec)
+  - Flog2: JSON format (2 logs/sec)
+- Promtail parse ทั้ง 2 formats ด้วย pipeline stages (regex + JSON)
+- Field normalization: remote_ip, method, status ใช้ common names
+- รวมข้อมูลจากทั้ง 2 apps ใน **panel เดียวกัน** พร้อม split series
+- 7 unified visualizations (เทียบเคียง Lab08 แต่ใช้ LGTM Stack)
+- LogQL queries: `sum by (app)` สำหรับ split series aggregation
+- เหมาะสำหรับเปรียบเทียบ LGTM vs ELK ในแบบ multi-application

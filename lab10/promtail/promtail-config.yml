@@ -1,0 +1,91 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Flog - Apache Combined Log format
+  - job_name: flog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: flog
+          app: flog
+          log_type: apache_combined
+          environment: lab
+          __path__: /logs/access.log
+
+    # Pipeline stages to parse Apache Combined Log format
+    pipeline_stages:
+      # Parse Apache combined log format
+      - regex:
+          expression: '^(?P<remote_ip>[\w\.]+) - (?P<remote_user>[\w\-]+) \[(?P<timestamp>[\w:/]+\s[+\-]\d{4})\] "(?P<method>\w+) (?P<request_uri>[\w\.\-\/\?=&%]+) (?P<protocol>[\w\/\.]+)" (?P<status>\d{3}) (?P<bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<user_agent>[^"]*)"'
+
+      # Parse timestamp
+      - timestamp:
+          source: timestamp
+          format: 02/Jan/2006:15:04:05 -0700
+
+      # Extract labels from parsed fields
+      - labels:
+          remote_ip:
+          method:
+          status:
+
+      # Add output format
+      - output:
+          source: message
+
+  # Flog2 - JSON format
+  - job_name: flog2
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: flog2
+          app: flog2
+          log_type: json
+          environment: lab
+          __path__: /logs/app.log
+
+    # Pipeline stages to parse JSON logs
+    pipeline_stages:
+      # Parse JSON
+      - json:
+          expressions:
+            host: host
+            user_identifier: user_identifier
+            datetime: datetime
+            method: method
+            request: request
+            protocol: protocol
+            status: status
+            size: size
+            referer: referer
+            user_agent: user_agent
+
+      # Parse timestamp
+      - timestamp:
+          source: datetime
+          format: 02/Jan/2006:15:04:05 -0700
+
+      # Rename host to remote_ip for consistency
+      - template:
+          source: remote_ip
+          template: "{{ .host }}"
+
+      # Extract labels from parsed fields
+      - labels:
+          remote_ip:
+          method:
+          status:
+
+      # Add output format
+      - output:
+          source: message

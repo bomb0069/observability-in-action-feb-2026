@@ -21,14 +21,15 @@ Flog (Fake Log Generator)
 
 ## LGTM Stack vs ELK Stack
 
-| Component | LGTM Stack | ELK Stack | Purpose |
-|-----------|------------|-----------|---------|
-| Log Collection | Promtail | Filebeat | อ่านและส่ง logs |
-| Log Processing | Promtail (pipeline) | Logstash | Parse และ transform logs |
-| Log Storage | Loki | Elasticsearch | เก็บ logs |
-| Visualization | Grafana | Kibana | แสดงผลและวิเคราะห์ |
+| Component      | LGTM Stack          | ELK Stack     | Purpose                  |
+| -------------- | ------------------- | ------------- | ------------------------ |
+| Log Collection | Promtail            | Filebeat      | อ่านและส่ง logs          |
+| Log Processing | Promtail (pipeline) | Logstash      | Parse และ transform logs |
+| Log Storage    | Loki                | Elasticsearch | เก็บ logs                |
+| Visualization  | Grafana             | Kibana        | แสดงผลและวิเคราะห์       |
 
 **Key Differences:**
+
 - **Loki**: Index เฉพาะ labels ไม่ index ทั้ง log content → ใช้ resources น้อยกว่า
 - **Elasticsearch**: Full-text indexing → Search ได้ดีกว่าแต่ใช้ resources มากกว่า
 - **Promtail**: Parse logs ด้วย pipeline stages (regex, json, etc.)
@@ -70,6 +71,7 @@ docker-compose ps
 ```
 
 Expected output:
+
 ```
 NAME         IMAGE                       STATUS
 flog         mingrammer/flog            Up
@@ -102,57 +104,71 @@ docker-compose logs -f loki
 Dashboard ชื่อ **"Apache Combined Logs - LGTM Stack"** ประกอบด้วย visualizations:
 
 ### 1. HTTP Status Code Distribution (Pie Chart)
+
 แสดงสัดส่วนของ HTTP status codes (200, 404, 500, etc.)
 
 **LogQL Query:**
+
 ```
 sum by (status) (count_over_time({app="flog"} | regexp "..." [$__interval]))
 ```
 
 ### 2. Total Requests (Gauge)
+
 แสดงจำนวน requests ทั้งหมดในช่วงเวลาที่เลือก
 
 **LogQL Query:**
+
 ```
 sum(count_over_time({app="flog"} [$__interval]))
 ```
 
 ### 3. Top 10 Requesting IPs (Bar Chart)
+
 แสดง IP addresses ที่ส่ง requests มามากที่สุด 10 อันดับ
 
 **LogQL Query:**
+
 ```
 topk(10, sum by (remote_ip) (count_over_time({app="flog"} | regexp "..." [$__interval])))
 ```
 
 ### 4. Traffic Over Time (Time Series)
+
 แสดงปริมาณ traffic ตามช่วงเวลา
 
 **LogQL Query:**
+
 ```
 sum(count_over_time({app="flog"} [$__interval]))
 ```
 
 ### 5. HTTP Methods Over Time (Time Series)
+
 แสดงการกระจายของ HTTP methods (GET, POST, etc.) ตามเวลา
 
 **LogQL Query:**
+
 ```
 sum by (method) (count_over_time({app="flog"} | regexp "..." [$__interval]))
 ```
 
 ### 6. Apache Access Logs (Logs Panel)
+
 แสดง raw logs สำหรับตรวจสอบรายละเอียด
 
 **LogQL Query:**
+
 ```
 {app="flog"}
 ```
 
 ### 7. Top 10 Request URIs (Table)
+
 แสดง URLs/endpoints ที่ถูกเรียกมากที่สุด 10 อันดับ
 
 **LogQL Query:**
+
 ```
 topk(10, sum by (request_uri) (count_over_time({app="flog"} | regexp "..." [$__interval])))
 ```
@@ -162,6 +178,7 @@ topk(10, sum by (request_uri) (count_over_time({app="flog"} | regexp "..." [$__i
 LogQL คือ query language ของ Loki (คล้าย PromQL ของ Prometheus)
 
 **Basic Query Structure:**
+
 ```
 {label="value"} | parser | filter | metrics
 ```
@@ -169,21 +186,25 @@ LogQL คือ query language ของ Loki (คล้าย PromQL ของ 
 **Examples:**
 
 1. Filter by label:
+
 ```
 {app="flog"}
 ```
 
 2. Parse with regex:
+
 ```
 {app="flog"} | regexp "(?P<status>\\d{3})"
 ```
 
 3. Count logs:
+
 ```
 count_over_time({app="flog"} [5m])
 ```
 
 4. Aggregate by label:
+
 ```
 sum by (status) (count_over_time({app="flog"} [5m]))
 ```
@@ -193,14 +214,18 @@ sum by (status) (count_over_time({app="flog"} [5m]))
 Promtail ใช้ pipeline stages เพื่อ parse และ transform logs:
 
 ### 1. Regex Stage
+
 Extract fields จาก log line:
+
 ```yaml
 - regex:
     expression: '^(?P<remote_ip>[\w\.]+) - ...'
 ```
 
 ### 2. Timestamp Stage
+
 Parse timestamp จาก log:
+
 ```yaml
 - timestamp:
     source: timestamp
@@ -208,7 +233,9 @@ Parse timestamp จาก log:
 ```
 
 ### 3. Labels Stage
+
 สร้าง labels จาก extracted fields:
+
 ```yaml
 - labels:
     remote_ip:
@@ -217,7 +244,9 @@ Parse timestamp จาก log:
 ```
 
 ### 4. Output Stage
+
 กำหนด output format:
+
 ```yaml
 - output:
     source: message
@@ -226,17 +255,20 @@ Parse timestamp จาก log:
 ## Verify Services
 
 ### Check Loki is receiving logs:
+
 ```bash
 curl -G -s "http://localhost:3100/loki/api/v1/query" \
   --data-urlencode 'query={app="flog"}' | jq
 ```
 
 ### Check Loki labels:
+
 ```bash
 curl -s "http://localhost:3100/loki/api/v1/labels" | jq
 ```
 
 ### Check Promtail targets:
+
 ```bash
 curl -s "http://localhost:9080/targets" | jq
 ```
@@ -244,26 +276,34 @@ curl -s "http://localhost:9080/targets" | jq
 ## Configuration Files
 
 ### docker-compose.yml
+
 Defines 4 services:
+
 - flog: Log generator
 - loki: Log aggregation system
 - promtail: Log collector
 - grafana: Visualization
 
 ### loki/loki-config.yml
+
 Loki configuration:
+
 - Storage: filesystem (for lab purposes)
 - Schema: v11 with boltdb-shipper
 - Limits: ingestion rate and retention
 
 ### promtail/promtail-config.yml
+
 Promtail configuration:
+
 - Scrape config: file paths and labels
 - Pipeline stages: regex parsing for Apache logs
 - Client: Loki push endpoint
 
 ### grafana/provisioning/
+
 Auto-provisioning configuration:
+
 - datasources/loki.yml: Loki datasource
 - dashboards/dashboard.yml: Dashboard provider
 - dashboards/apache-logs.json: Dashboard definition
@@ -273,22 +313,26 @@ Auto-provisioning configuration:
 ### No data in Grafana?
 
 1. Check if Flog is generating logs:
+
 ```bash
 docker-compose logs flog
 ls -lh logs/
 ```
 
 2. Check if Promtail is reading logs:
+
 ```bash
 docker-compose logs promtail | grep "total_bytes_processed"
 ```
 
 3. Check if Loki is receiving data:
+
 ```bash
 curl -s "http://localhost:3100/loki/api/v1/labels" | jq
 ```
 
 4. Check Grafana datasource:
+
 - Go to Configuration → Data Sources
 - Click on "Loki"
 - Click "Test" button
@@ -296,17 +340,20 @@ curl -s "http://localhost:3100/loki/api/v1/labels" | jq
 ### Services not starting?
 
 1. Check Docker logs:
+
 ```bash
 docker-compose logs
 ```
 
 2. Verify ports are not in use:
+
 ```bash
 lsof -i :3000  # Grafana
 lsof -i :3100  # Loki
 ```
 
 3. Clean up and restart:
+
 ```bash
 docker-compose down -v
 docker-compose up -d
@@ -317,26 +364,31 @@ docker-compose up -d
 Try these queries in Grafana Explore (http://localhost:3000/explore):
 
 ### 1. Error Logs Only (5xx status codes)
+
 ```
 {app="flog"} | regexp "(?P<status>5\\d{2})"
 ```
 
 ### 2. GET Requests
+
 ```
 {app="flog"} | regexp "\"GET "
 ```
 
 ### 3. Large Responses (>10KB)
+
 ```
 {app="flog"} | regexp "(?P<bytes>\\d+)" | bytes > 10000
 ```
 
 ### 4. Rate of Requests (per second)
+
 ```
 rate({app="flog"} [1m])
 ```
 
 ### 5. Bytes Transferred Over Time
+
 ```
 sum(rate({app="flog"} | regexp "(?P<bytes_sent>\\d+)" | unwrap bytes_sent [5m]))
 ```
