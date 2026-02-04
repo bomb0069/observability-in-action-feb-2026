@@ -5,6 +5,7 @@ Lab สำหรับทดสอบการเก็บ logs จาก multip
 ## Key Features
 
 ✨ **Automatic Kibana Setup**
+
 - Index patterns ถูกสร้างอัตโนมัติเมื่อ start services
 - ไม่ต้อง manual configuration ใน Kibana UI
 - Dashboard พร้อมใช้งานทันทีหลังจาก start
@@ -95,6 +96,7 @@ docker-compose logs -f kibana-setup
 ```
 
 You should see:
+
 ```
 ✓ Data found in both indices
 ✓ Index pattern created: flog-logs-*
@@ -175,6 +177,7 @@ JSON log (flog2):
 Index patterns are **automatically created** when you start the services! No manual steps needed.
 
 To verify:
+
 1. Open Kibana at http://localhost:5601
 2. Go to: **Management → Stack Management → Index Patterns**
 3. You should see:
@@ -189,6 +192,7 @@ Dashboard is also automatically imported and ready to use:
 2. Open **"Apache Logs Overview"** dashboard
 
 Dashboard includes 7 visualizations for Apache logs (flog):
+
 - HTTP Status Codes (Pie chart)
 - Top 10 IPs (Bar chart)
 - Traffic Over Time (Line chart)
@@ -232,6 +236,7 @@ Dashboard includes 7 visualizations for Apache logs (flog):
 Since index patterns are auto-created, you can immediately start creating custom visualizations:
 
 **Compare Log Volume:**
+
 1. Go to: **Analytics → Visualize Library → Create visualization**
 2. Choose **"Line"** chart
 3. Add data series:
@@ -243,6 +248,7 @@ Since index patterns are auto-created, you can immediately start creating custom
 Expected result: flog2 line should show ~2x volume compared to flog
 
 **Compare HTTP Status Distribution:**
+
 1. Create two separate Pie charts:
    - **Chart 1**: Index pattern `flog-logs-*`, Bucket: Terms on `http.response.status_code`
    - **Chart 2**: Index pattern `flog2-logs-*`, Bucket: Terms on `status`
