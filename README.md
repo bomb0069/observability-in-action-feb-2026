@@ -46,8 +46,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 
 **Metrics Track (Labs 11+):**
 
-9. **Lab11**: Metrics foundations ด้วย Prometheus + Grafana (Coming soon)
-10. **Lab12+**: Advanced metrics, alerting, และ SLO dashboards (Planned)
+9. **Lab11**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
 
 ## Labs Overview
 
@@ -197,14 +196,16 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 
 ## Metrics Track (Labs 11+)
 
-เริ่ม track สำหรับ **metrics observability** (Prometheus, Alertmanager, Tempo/Mimir integrations) หลังจากปูพื้น log pipeline ครบแล้ว
+ต่อยอดจาก log pipeline มาสู่ **metrics observability** โดยเริ่มจาก Spring Boot application ที่ส่ง Micrometer metrics ไปยัง Prometheus และ Grafana
 
-### Lab11 - Metrics Foundations (Coming Soon)
+### [Lab11 - Spring Boot Metrics with Prometheus & Grafana](lab11/)
 
-**Planned Highlights:**
+**Key Features:**
 
-- Prometheus server + Node Exporter + cAdvisor สำหรับ system/container metrics
-- Grafana provisioning dashboards สำหรับ CPU, memory, latency และ custom SLO panels
-- Alertmanager integration พร้อมตัวอย่าง alert rules
-- ตัวอย่างการ correlate metrics กับ logs เพื่อ incident response ที่ครบ loop
-- Labs 12+ จะต่อยอดเรื่อง recording rules, exemplars, และ multi-signal observability
+- Spring Boot `user-service` + PostgreSQL backend พร้อม Micrometer/Actuator endpoint `/actuator/prometheus`
+- Prometheus scrape job (5s) เก็บ metrics โดยตรงจากคอนเทนเนอร์ `user-service`
+- Grafana provisioning ครบชุด (datasource UID `prometheus` + dashboard ดัดแปลงจาก Grafana Lab ID 19004)
+- Metrics panels ครอบคลุม throughput, latency, error %, CPU, heap usage, live threads ฯลฯ
+- Built-in load test: `docker run --rm -i grafana/k6 run - <scripts/load.js` เพื่อกระตุ้น metric spikes แล้วสังเกตผลบน Grafana
+
+> Lab12+ (coming soon) จะต่อยอดเรื่อง alerting, recording rules, exemplars และ multi-signal incident workflows

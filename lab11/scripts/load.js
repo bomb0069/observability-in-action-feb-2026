@@ -4,7 +4,7 @@ export const options = {
   vus: 10,
   duration: "30s",
 };
-export default function () {
+export default function load_() {
   http.get("http://host.docker.internal:8080/api/v1/users/1");
   sleep(1);
 }
