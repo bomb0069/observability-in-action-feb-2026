@@ -1,0 +1,41 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/access.log
+    fields:
+      log_type: apache
+      app: flog
+      environment: lab
+    fields_under_root: true
+
+  - type: log
+    enabled: true
+    paths:
+      - /logs/app.log
+    fields:
+      log_type: json
+      app: flog2
+      environment: lab
+    fields_under_root: true
+    json.keys_under_root: true
+    json.add_error_key: true
+
+# Output to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+
+# Logging configuration
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+# Processors
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_docker_metadata: ~
