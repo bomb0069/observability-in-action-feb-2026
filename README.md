@@ -47,6 +47,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 **Metrics Track (Labs 11+):**
 
 9. **Lab11**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
+10. **Lab12**: Postgres exporter + database dashboards alongside application metrics
 
 ## Labs Overview
 
@@ -204,8 +205,19 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 
 - Spring Boot `user-service` + PostgreSQL backend พร้อม Micrometer/Actuator endpoint `/actuator/prometheus`
 - Prometheus scrape job (5s) เก็บ metrics โดยตรงจากคอนเทนเนอร์ `user-service`
-- Grafana provisioning ครบชุด (datasource UID `prometheus` + dashboard ดัดแปลงจาก Grafana Lab ID 19004)
+- Grafana provisioning ครบชุด (datasource UID `prometheus` + dashboard ดัดแปลงจาก Grafana Lab ID 14430)
 - Metrics panels ครอบคลุม throughput, latency, error %, CPU, heap usage, live threads ฯลฯ
 - Built-in load test: `docker run --rm -i grafana/k6 run - <scripts/load.js` เพื่อกระตุ้น metric spikes แล้วสังเกตผลบน Grafana
 
-> Lab12+ (coming soon) จะต่อยอดเรื่อง alerting, recording rules, exemplars และ multi-signal incident workflows
+### [Lab12 - Postgres Exporter + Database Dashboards](lab12/)
+
+**Key Features:**
+
+- เพิ่ม `postgres-exporter` เพื่อดึง metrics จากฐานข้อมูล `user-db`
+- Prometheus เก็บข้อมูลจากทั้ง Spring Boot actuator และ exporter ใน config เดียว
+- Grafana provisioning เพิ่ม dashboard อีกใบ (`postgres-metrics.json`) ครอบคลุม active connections, TPS, cache hit ratio, DB size และ deadlocks
+- Dashboard JSON ผูกกับ datasource UID `prometheus` ที่ provision ไว้อยู่แล้ว ไม่ต้องเลือก datasource ซ้ำใน UI
+- ยังคงใช้ load script (`docker run --rm -i grafana/k6 run - <scripts/load.js`) เพื่อกระตุ้นทั้ง application และ database metrics
+- เหมาะสำหรับสาธิต full-stack observability (app + database layer)
+
+> Lab13+ (coming soon) จะต่อยอดเรื่อง alerting, recording rules, exemplars และ multi-signal incident workflows
