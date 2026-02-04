@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  flog:
+    image: mingrammer/flog
+    container_name: lab00-flog
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    container_name: lab00-filebeat
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: lab00-logstash
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: lab00-elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: lab00-kibana
+
+  kibana_setup:
+    image: curlimages/curl:latest
+    container_name: lab00-kibana-setup
+
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: lab00-promtail
+
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: lab00-loki
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: lab00-grafana

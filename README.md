@@ -13,7 +13,7 @@ Lab series สำหรับการเรียนรู้ ELK Stack (Elasti
 
 ```bash
 # เข้าไปใน lab ที่ต้องการ
-cd lab03  # หรือ lab04, lab05, lab06, lab07, lab08
+cd lab00  # หรือ lab03-lab10 (Logs) / lab11+ (Metrics)
 
 # Start services
 docker-compose up -d
@@ -29,7 +29,11 @@ docker-compose down
 
 Labs ออกแบบให้เรียนรู้แบบ progressive:
 
-**ELK Stack (Labs 03-08):**
+**Warm-up Utilities:**
+
+0. **Lab00**: Pre-pull images ที่ใช้ในทุก lab เพื่อลดเวลารอ
+
+**Logs Track (Labs 03-10):**
 
 1. **Lab03**: เริ่มต้นกับ basic ELK stack
 2. **Lab04**: เพิ่ม visualizations และ dashboards
@@ -37,10 +41,32 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 4. **Lab06**: เพิ่ม automatic setup capabilities
 5. **Lab07**: รวม applications ใน unified dashboard (separate visualizations)
 6. **Lab08**: รวม applications ใน unified visualizations (same charts with split series)
+7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail)
+8. **Lab10**: Unified multi-application logs with LGTM stack (split series)
 
-**LGTM Stack (Labs 09+):** 7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail) 8. **Lab10**: Unified multi-application logs with LGTM stack (split series)
+**Metrics Track (Labs 11+):**
+
+9. **Lab11**: Metrics foundations ด้วย Prometheus + Grafana (Coming soon)
+10. **Lab12+**: Advanced metrics, alerting, และ SLO dashboards (Planned)
 
 ## Labs Overview
+
+### [Lab00 - Image Warm-Up for ELK & LGTM Labs](lab00/)
+
+Lab สำหรับ pre-pull container images ทั้งหมดที่ใช้ใน labs 03-10 ช่วยให้ตอนเริ่ม lab จริงไม่ต้องรอ docker ดึง image ใหม่
+
+**Key Features:**
+
+- ดึง images หลักทั้งหมด: mingrammer/flog, Elasticsearch/Logstash/Kibana/Filebeat 8.11, curlimages/curl, grafana/promtail, grafana/loki, grafana/grafana
+- ใช้ `docker compose pull` ครั้งเดียวเพื่อลดเวลารอในห้องเรียนหรือ workshop
+- ปรับ container_name ให้ไม่ชนกับ labs อื่น (prefix lab00-)
+- README สั้น ๆ บอกขั้นตอนและรายการ images ที่เกี่ยวข้อง
+
+---
+
+## Logs Track (Labs 03-10)
+
+โฟกัสการเก็บและวิเคราะห์ **logs** โดยไล่จาก ELK (Labs 03-08) ไปจนถึง LGTM (Labs 09-10)
 
 ### [Lab03 - ELK Stack with Filebeat and Flog](lab03/)
 
@@ -166,3 +192,19 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - 7 unified visualizations (เทียบเคียง Lab08 แต่ใช้ LGTM Stack)
 - LogQL queries: `sum by (app)` สำหรับ split series aggregation
 - เหมาะสำหรับเปรียบเทียบ LGTM vs ELK ในแบบ multi-application
+
+---
+
+## Metrics Track (Labs 11+)
+
+เริ่ม track สำหรับ **metrics observability** (Prometheus, Alertmanager, Tempo/Mimir integrations) หลังจากปูพื้น log pipeline ครบแล้ว
+
+### Lab11 - Metrics Foundations (Coming Soon)
+
+**Planned Highlights:**
+
+- Prometheus server + Node Exporter + cAdvisor สำหรับ system/container metrics
+- Grafana provisioning dashboards สำหรับ CPU, memory, latency และ custom SLO panels
+- Alertmanager integration พร้อมตัวอย่าง alert rules
+- ตัวอย่างการ correlate metrics กับ logs เพื่อ incident response ที่ครบ loop
+- Labs 12+ จะต่อยอดเรื่อง recording rules, exemplars, และ multi-signal observability
