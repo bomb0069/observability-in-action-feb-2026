@@ -1,0 +1,10 @@
+# Logs
+logs/
+*.log
+
+# Elasticsearch data
+elasticsearch-data/
+
+# OS files
+.DS_Store
+Thumbs.db
