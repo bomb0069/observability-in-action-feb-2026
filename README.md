@@ -31,7 +31,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 
 **Warm-up Utilities:**
 
-0. **Lab00**: Pre-pull images ที่ใช้ในทุก lab เพื่อลดเวลารอ
+0. **Lab00**: Pre-pull images ที่ใช้ในทุก lab (logs + metrics) เพื่อลดเวลารอ
 
 **Logs Track (Labs 03-10):**
 
@@ -48,16 +48,17 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 
 9. **Lab11**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
 10. **Lab12**: Postgres exporter + database dashboards alongside application metrics
+11. **Lab13**: Node exporter + infrastructure dashboards to correlate system resources
 
 ## Labs Overview
 
-### [Lab00 - Image Warm-Up for ELK & LGTM Labs](lab00/)
+### [Lab00 - Image Warm-Up for ELK, LGTM & Metrics Labs](lab00/)
 
-Lab สำหรับ pre-pull container images ทั้งหมดที่ใช้ใน labs 03-10 ช่วยให้ตอนเริ่ม lab จริงไม่ต้องรอ docker ดึง image ใหม่
+Lab สำหรับ pre-pull container images ทั้งหมดที่ใช้ใน labs 03-13 (logs + metrics) ช่วยให้ตอนเริ่ม lab จริงไม่ต้องรอ docker ดึง image ใหม่
 
 **Key Features:**
 
-- ดึง images หลักทั้งหมด: mingrammer/flog, Elasticsearch/Logstash/Kibana/Filebeat 8.11, curlimages/curl, grafana/promtail, grafana/loki, grafana/grafana
+- ดึง images หลักทั้งหมด: mingrammer/flog, Elasticsearch/Logstash/Kibana/Filebeat 8.11, curlimages/curl, grafana/promtail, grafana/loki, grafana/grafana, prom/prometheus, postgres:16.3, quay.io/prometheuscommunity/postgres-exporter:v0.15.0, prom/node-exporter:v1.8.1, grafana/k6:0.49.0
 - ใช้ `docker compose pull` ครั้งเดียวเพื่อลดเวลารอในห้องเรียนหรือ workshop
 - ปรับ container_name ให้ไม่ชนกับ labs อื่น (prefix lab00-)
 - README สั้น ๆ บอกขั้นตอนและรายการ images ที่เกี่ยวข้อง
@@ -219,5 +220,15 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - Dashboard JSON ผูกกับ datasource UID `prometheus` ที่ provision ไว้อยู่แล้ว ไม่ต้องเลือก datasource ซ้ำใน UI
 - ยังคงใช้ load script (`docker run --rm -i grafana/k6 run - <scripts/load.js`) เพื่อกระตุ้นทั้ง application และ database metrics
 - เหมาะสำหรับสาธิต full-stack observability (app + database layer)
+
+### [Lab13 - Node Exporter + Infrastructure Metrics](lab13/)
+
+**Key Features:**
+
+- เพิ่ม `prom/node-exporter` เพื่อเก็บ CPU, memory, system load และ filesystem stats ของ container host
+- Prometheus scrape node exporter ควบคู่กับ Spring Boot และ Postgres exporters ใน environment เดียว
+- Grafana provisioning เพิ่ม dashboard ที่ยิง PromQL สำเร็จรูป (เช่น CPU %, memory utilization, load averages)
+- สาธิตมุมมอง "triangulate" ปัญหา: load script → app metrics → database metrics → infrastructure metrics
+- ใช้สคริปต์ k6 เดิมในการสร้างภาระงานเพื่อให้เห็นความสัมพันธ์ของแต่ละเลเยอร์
 
 > Lab13+ (coming soon) จะต่อยอดเรื่อง alerting, recording rules, exemplars และ multi-signal incident workflows

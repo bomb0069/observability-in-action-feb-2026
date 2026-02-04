@@ -1,0 +1,91 @@
+version: "3.5"
+
+services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: user-service:1.0.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      OTEL_SERVICE_NAME: user-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: service.name=user-service
+    ports:
+      - 8080:8080
+    depends_on:
+      user-db:
+        condition: service_healthy
+    restart: always
+
+  user-db:
+    image: "postgres:16.3"
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./user/tearup/init.sql:/docker-entrypoint-initdb.d/user.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $$POSTGRES_DB -h localhost -p 5432 -U $$POSTGRES_USER",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      DATA_SOURCE_URI: user-db:5432/user?sslmode=disable
+      DATA_SOURCE_USER: postgres
+      DATA_SOURCE_PASS: postgres
+      PG_EXPORTER_AUTO_DISCOVER_DATABASES: "true"
+    depends_on:
+      - user-db
+    ports:
+      - "9187:9187"
+    restart: always
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.1
+    ports:
+      - "9100:9100"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - user-service
+      - postgres-exporter
+      - node-exporter
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: always
