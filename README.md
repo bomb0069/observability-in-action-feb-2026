@@ -29,12 +29,16 @@ docker-compose down
 
 Labs ออกแบบให้เรียนรู้แบบ progressive:
 
+**ELK Stack (Labs 03-08):**
 1. **Lab03**: เริ่มต้นกับ basic ELK stack
 2. **Lab04**: เพิ่ม visualizations และ dashboards
 3. **Lab05**: เพิ่ม multiple applications กับ different log formats
 4. **Lab06**: เพิ่ม automatic setup capabilities
 5. **Lab07**: รวม applications ใน unified dashboard (separate visualizations)
 6. **Lab08**: รวม applications ใน unified visualizations (same charts with split series)
+
+**LGTM Stack (Labs 09+):**
+7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail)
 
 ## Labs Overview
 
@@ -125,3 +129,21 @@ Lab สำหรับแสดง logs จาก multiple applications ใน *
 - Single unified index pattern (unified-logs-\*) แทน separate indices
 - 7 unified visualizations แทนที่ 14 separate visualizations
 - Field normalization: Apache (COMBINEDAPACHELOG) และ JSON logs ใช้ common field names
+
+---
+
+### [Lab09 - Grafana Visualizations for Apache Combined Logs with LGTM Stack](lab09/)
+
+Lab สำหรับสร้าง visualizations และ dashboards บน Grafana เพื่อวิเคราะห์ Apache combined format logs โดยใช้ LGTM Stack (Loki, Grafana, Tempo, Mimir)
+
+**Key Features:**
+
+- ✨ LGTM Stack (Loki + Grafana + Promtail)
+- Promtail parse Apache logs ด้วย pipeline stages (regex)
+- Loki: Label-based indexing (ใช้ resources น้อยกว่า Elasticsearch)
+- LogQL: Query language สำหรับ query และ aggregate logs
+- 7 visualizations เทียบเคียง Lab04 (ELK Stack)
+- Auto-provisioned Grafana datasource และ dashboard
+- Anonymous authentication (ไม่ต้อง login)
+- Timezone support: Asia/Bangkok (UTC+7)
+- เหมาะสำหรับเปรียบเทียบ LGTM vs ELK Stack

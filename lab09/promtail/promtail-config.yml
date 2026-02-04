@@ -1,0 +1,47 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: flog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: flog
+          app: flog
+          log_type: apache_combined
+          environment: lab
+          __path__: /logs/*.log
+    
+    # Pipeline stages to parse Apache Combined Log format
+    pipeline_stages:
+      # Parse Apache combined log format
+      - regex:
+          expression: '^(?P<remote_ip>[\w\.]+) - (?P<remote_user>[\w\-]+) \[(?P<timestamp>[\w:/]+\s[+\-]\d{4})\] "(?P<method>\w+) (?P<request_uri>[\w\.\-\/\?=&%]+) (?P<protocol>[\w\/\.]+)" (?P<status>\d{3}) (?P<bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<user_agent>[^"]*)"'
+      
+      # Parse timestamp
+      - timestamp:
+          source: timestamp
+          format: 02/Jan/2006:15:04:05 -0700
+      
+      # Extract labels from parsed fields
+      - labels:
+          remote_ip:
+          method:
+          status:
+      
+      # Convert status to number
+      - template:
+          source: status_code
+          template: '{{ .status }}'
+      
+      # Add output format
+      - output:
+          source: message
