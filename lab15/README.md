@@ -40,16 +40,19 @@ Distributed tracing tracks requests as they flow through multiple services in a 
 ### Zero-Code Instrumentation
 
 Both services use **zero-code instrumentation**, meaning:
+
 - No code changes required to enable tracing
 - No OpenTelemetry SDK dependencies in application code
 - Configuration through environment variables only
 
 **Java (User Service)**:
+
 - Uses OpenTelemetry Java Agent
 - Bytecode instrumentation at JVM startup
 - Automatically instruments Spring Boot, JDBC, HTTP clients
 
 **Node.js (Point Service)**:
+
 - Uses `@opentelemetry/auto-instrumentations-node`
 - Loaded with `-r` flag before application
 - Automatically instruments HTTP, Express, MySQL2
@@ -99,11 +102,13 @@ docker-compose ps
 ### 2. Verify Services
 
 **User Service**:
+
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
 **Point Service**:
+
 ```bash
 curl http://localhost:8001/health
 ```
@@ -111,11 +116,13 @@ curl http://localhost:8001/health
 ### 3. Generate Distributed Traces
 
 **Single Request**:
+
 ```bash
 curl http://localhost:8080/api/v1/users/1
 ```
 
 **Load Testing** (generates multiple distributed traces):
+
 ```bash
 k6 run scripts/load.js
 ```
@@ -137,26 +144,31 @@ Navigate to: http://localhost:3000
 ### 3. Query Traces
 
 **Search by Service Name**:
+
 ```traceql
 { resource.service.name = "user-service" }
 ```
 
 **Search for Distributed Traces** (spans from both services):
+
 ```traceql
 { span.kind = "client" && span.http.method = "GET" }
 ```
 
 **Search for Traces with Errors**:
+
 ```traceql
 { status = error }
 ```
 
 **Search for Traces to Point Service**:
+
 ```traceql
 { resource.service.name = "point-service" }
 ```
 
 **Search for MySQL Queries**:
+
 ```traceql
 { span.db.system = "mysql" }
 ```
@@ -167,7 +179,7 @@ Click on any trace to see:
 
 1. **Service Graph**: Visual representation of service calls
 2. **Span Timeline**: Time spent in each service
-3. **Span Details**: 
+3. **Span Details**:
    - HTTP request/response details
    - Database queries
    - Error stack traces (if any)
@@ -236,6 +248,7 @@ OTEL_LOGS_EXPORTER: otlp
 ```
 
 `package.json` start script:
+
 ```json
 "start": "node -r ./tracing.js dist/index.js"
 ```
@@ -245,11 +258,13 @@ OTEL_LOGS_EXPORTER: otlp
 ### No Traces in Tempo
 
 1. **Check service health**:
+
    ```bash
    docker-compose ps
    ```
 
 2. **Check OTLP endpoint connectivity**:
+
    ```bash
    docker-compose logs user-service | grep -i otlp
    docker-compose logs point-service | grep -i otlp
@@ -274,11 +289,13 @@ OTEL_LOGS_EXPORTER: otlp
 ### Point Service Connection Fails
 
 1. **Check Point Service is running**:
+
    ```bash
    docker-compose ps point-service
    ```
 
 2. **Verify MySQL is healthy**:
+
    ```bash
    docker-compose ps point-db
    ```

@@ -40,8 +40,8 @@ public class UserController {
     @GetMapping("/{id}")
     public Map<String, Object> getUserById(@PathVariable Long id) {
 
-        // Simulate request error
-        if (random.nextInt(3) > 1) {
+        // Simulate request error (1 in 20 requests)
+        if (random.nextInt(20) == 0) {
             throw new FakeInternalException("Failed to fetch user id %d".formatted(id));
         }
 

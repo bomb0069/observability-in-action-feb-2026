@@ -10,7 +10,6 @@ Lab 15 extends Lab 14 to demonstrate **distributed tracing across multiple servi
    - REST API for managing user points
    - Zero-code instrumentation with OpenTelemetry auto-instrumentations-node
    - MySQL database backend
-   
 2. **Service Integration**
    - User Service (Java) calls Point Service (Node.js) via HTTP
    - Trace context automatically propagated between services
@@ -23,7 +22,7 @@ User Request → User Service (Java/Spring Boot)
                  ↓
                PostgreSQL
                  ↓
-            Point Service (Node.js/Express)  
+            Point Service (Node.js/Express)
                  ↓
                MySQL
                  ↓
@@ -109,6 +108,7 @@ User Request → User Service (Java/Spring Boot)
 ### User Service (Java)
 
 Environment variables only - no code or dependency changes:
+
 ```yaml
 OTEL_SERVICE_NAME: user-service
 OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
@@ -117,6 +117,7 @@ OTEL_TRACES_EXPORTER: otlp
 ```
 
 Java Agent automatically instruments:
+
 - Spring Boot MVC controllers
 - RestTemplate HTTP client
 - JDBC database calls
@@ -125,6 +126,7 @@ Java Agent automatically instruments:
 ### Point Service (Node.js)
 
 Environment variables + tracing.js preload:
+
 ```yaml
 OTEL_SERVICE_NAME: point-service
 OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
@@ -133,6 +135,7 @@ OTEL_TRACES_EXPORTER: otlp
 ```
 
 Auto-instrumentation package instruments:
+
 - Express HTTP server
 - HTTP client requests
 - MySQL2 database queries
@@ -153,20 +156,22 @@ Auto-instrumentation package instruments:
 
 ## Services Summary
 
-| Service | Technology | Port | Database | Instrumentation |
-|---------|-----------|------|----------|-----------------|
-| user-service | Java/Spring Boot 3 | 8080 | PostgreSQL 16 | OpenTelemetry Java Agent |
-| point-service | Node.js 20/Express | 8001 | MySQL 8.3 | OpenTelemetry auto-instrumentations-node |
-| lgtm | Grafana/Tempo/Mimir/Loki | 3000, 4317, 4318 | N/A | N/A |
+| Service       | Technology               | Port             | Database      | Instrumentation                          |
+| ------------- | ------------------------ | ---------------- | ------------- | ---------------------------------------- |
+| user-service  | Java/Spring Boot 3       | 8080             | PostgreSQL 16 | OpenTelemetry Java Agent                 |
+| point-service | Node.js 20/Express       | 8001             | MySQL 8.3     | OpenTelemetry auto-instrumentations-node |
+| lgtm          | Grafana/Tempo/Mimir/Loki | 3000, 4317, 4318 | N/A           | N/A                                      |
 
 ## Endpoints
 
 ### User Service (8080)
+
 - `GET /api/v1/users/{id}` - Get user with points (distributed trace!)
 - `GET /actuator/health` - Health check
 - `GET /actuator/prometheus` - Metrics
 
 ### Point Service (8001)
+
 - `GET /health` - Health check
 - `GET /api/v1/points` - List all points
 - `GET /api/v1/points/user/:userId` - Get user's points history
@@ -176,12 +181,14 @@ Auto-instrumentation package instruments:
 ## Testing
 
 ### Start Services
+
 ```bash
 cd lab15
 docker compose up -d --build
 ```
 
 ### Generate Distributed Traces
+
 ```bash
 # Single request
 curl http://localhost:8080/api/v1/users/1
@@ -191,6 +198,7 @@ k6 run scripts/load.js
 ```
 
 ### View Traces
+
 1. Open Grafana: http://localhost:3000 (admin/admin)
 2. Navigate to Explore → Tempo
 3. Search: `{ resource.service.name = "user-service" }`
