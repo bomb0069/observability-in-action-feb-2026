@@ -13,7 +13,7 @@ Lab series สำหรับการเรียนรู้ ELK Stack (Elasti
 
 ```bash
 # เข้าไปใน lab ที่ต้องการ
-cd lab00  # หรือ lab03-lab10 (Logs) / lab11+ (Metrics)
+cd lab00  # หรือ lab03-lab10 (Logs) / lab01, lab11+ (Metrics)
 
 # Start services
 docker-compose up -d
@@ -32,6 +32,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 **Warm-up Utilities:**
 
 0. **Lab00**: Pre-pull images ที่ใช้ในทุก lab (logs + metrics) เพื่อลดเวลารอ
+1. **Lab01**: Spring Boot metrics quickstart (Prometheus + Grafana dashboard แบบสำเร็จรูป)
 
 **Logs Track (Labs 03-10):**
 
@@ -196,9 +197,18 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 
 ---
 
-## Metrics Track (Labs 11+)
+## Metrics Track (Labs 01 & 11+)
 
-ต่อยอดจาก log pipeline มาสู่ **metrics observability** โดยเริ่มจาก Spring Boot application ที่ส่ง Micrometer metrics ไปยัง Prometheus และ Grafana
+ต่อยอดจาก log pipeline มาสู่ **metrics observability** เริ่มด้วย Lab01 ซึ่งเป็น quickstart stack ก่อนจะลงลึกกับ Lab11-Lab13 ที่เพิ่มฐานข้อมูลและ infrastructure metrics
+
+### [Lab01 - Spring Boot Metrics Quickstart](lab01/)
+
+**Key Features:**
+
+- Spring Boot `user-service` + PostgreSQL backend พร้อม Micrometer actuator endpoint `/actuator/prometheus`
+- Prometheus scrape ทุก 5 วินาทีและ Grafana provisioning datasource UID `prometheus`
+- Dashboard พร้อมใช้ (`Spring Boot Metrics (Lab01)`) สร้างจาก Grafana Lab ID 14430
+- มีสคริปต์ `grafana/k6` load test เพื่อกระตุ้น throughput / error / latency metrics
 
 ### [Lab11 - Spring Boot Metrics with Prometheus & Grafana](lab11/)
 
