@@ -1,0 +1,107 @@
+services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: bomb0069/observability-user-service:lab15-1.0.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      POINT_SERVICE_URL: http://point-service:8001
+      OTEL_SERVICE_NAME: user-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: service.name=user-service
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+    ports:
+      - 8080:8080
+    depends_on:
+      lgtm:
+        condition: service_started
+      user-db:
+        condition: service_healthy
+      point-service:
+        condition: service_started
+    restart: always
+
+  user-db:
+    image: "postgres:16.3"
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./user/tearup/init.sql:/docker-entrypoint-initdb.d/user.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $$POSTGRES_DB -h localhost -p 5432 -U $$POSTGRES_USER",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  point-service:
+    build:
+      context: ./point
+      dockerfile: Dockerfile
+    image: bomb0069/observability-point-service:lab15-1.0.0
+    environment:
+      DB_HOST: point-db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root_password
+      DB_NAME: point_db
+      OTEL_SERVICE_NAME: point-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: service.name=point-service
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+    ports:
+      - 8001:8001
+    depends_on:
+      lgtm:
+        condition: service_started
+      point-db:
+        condition: service_healthy
+    restart: always
+
+  point-db:
+    image: "mysql:8.3.0"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: point_db
+      MYSQL_USER: point_user
+      MYSQL_PASSWORD: point_password
+    volumes:
+      - ./point/tearup/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    ports:
+      - "3000:3000" # Grafana UI
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    restart: always
