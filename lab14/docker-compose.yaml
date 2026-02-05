@@ -11,12 +11,10 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       OTEL_SERVICE_NAME: user-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://lgtm:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_RESOURCE_ATTRIBUTES: service.name=user-service
       OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: none
-      OTEL_LOGS_EXPORTER: none
     ports:
       - 8080:8080
     depends_on:
