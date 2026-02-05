@@ -51,6 +51,7 @@ Labs ออกแบบให้เรียนรู้แบบ progressive:
 9. **Lab11**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
 10. **Lab12**: Postgres exporter + database dashboards alongside application metrics
 11. **Lab13**: Node exporter + infrastructure dashboards to correlate system resources
+12. **Lab14**: OpenTelemetry distributed tracing with LGTM stack (Tempo + auto-instrumentation)
 
 ## Labs Overview
 
@@ -264,4 +265,19 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - สาธิตมุมมอง "triangulate" ปัญหา: load script → app metrics → database metrics → infrastructure metrics
 - ใช้สคริปต์ k6 เดิมในการสร้างภาระงานเพื่อให้เห็นความสัมพันธ์ของแต่ละเลเยอร์
 
-> Lab13+ (coming soon) จะต่อยอดเรื่อง alerting, recording rules, exemplars และ multi-signal incident workflows
+### [Lab14 - OpenTelemetry Distributed Tracing with LGTM](lab14/)
+
+**Key Features:**
+
+- ✨ เปลี่ยนจาก Prometheus+Grafana เป็น **LGTM Stack** (Loki, Grafana, Tempo, Mimir)
+- ✅ เพิ่ม **OpenTelemetry instrumentation** สำหรับ distributed tracing
+- Auto-instrument HTTP requests และ database queries
+- **Tempo** backend สำหรับเก็บ traces
+- OTLP (OpenTelemetry Protocol) สำหรับส่ง traces/metrics/logs
+- Grafana Explore ใช้งาน TraceQL เพื่อค้นหาและวิเคราะห์ traces
+- Trace sampling 100% สำหรับ development
+- ดู request flow, latency breakdown, database query performance
+- All-in-one observability: Metrics (Mimir) + Traces (Tempo) + Logs (Loki)
+- สาธิตการ correlate ระหว่าง traces กับ metrics และ logs
+
+> Lab15+ (coming soon) จะต่อยอดเรื่อง multi-service tracing, custom spans, trace-based alerting และ SLO monitoring
