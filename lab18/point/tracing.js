@@ -10,9 +10,7 @@ const {
 const {
   OTLPMetricExporter,
 } = require("@opentelemetry/exporter-metrics-otlp-grpc");
-const {
-  OTLPLogExporter,
-} = require("@opentelemetry/exporter-logs-otlp-grpc");
+const { OTLPLogExporter } = require("@opentelemetry/exporter-logs-otlp-grpc");
 const { Resource } = require("@opentelemetry/resources");
 const {
   SemanticResourceAttributes,
@@ -50,9 +48,7 @@ const resource = new Resource({
 const loggerProvider = new LoggerProvider({
   resource: resource,
 });
-loggerProvider.addLogRecordProcessor(
-  new SimpleLogRecordProcessor(logExporter)
-);
+loggerProvider.addLogRecordProcessor(new SimpleLogRecordProcessor(logExporter));
 logs.setGlobalLoggerProvider(loggerProvider);
 
 // Patch console.log to send logs to OpenTelemetry
@@ -102,10 +98,11 @@ console.info = function (...args) {
 const sdk = new NodeSDK({
   resource: resource,
   traceExporter,
-  metricReader: new (require("@opentelemetry/sdk-metrics").PeriodicExportingMetricReader)({
-    exporter: metricExporter,
-    exportIntervalMillis: 60000,
-  }),
+  metricReader:
+    new (require("@opentelemetry/sdk-metrics").PeriodicExportingMetricReader)({
+      exporter: metricExporter,
+      exportIntervalMillis: 60000,
+    }),
   instrumentations: [
     getNodeAutoInstrumentations({
       // Automatically instrument all supported libraries
@@ -125,7 +122,9 @@ const sdk = new NodeSDK({
 // Start SDK
 sdk.start();
 
-console.log("OpenTelemetry SDK initialized for point-service with Traces, Metrics, and Logs");
+console.log(
+  "OpenTelemetry SDK initialized for point-service with Traces, Metrics, and Logs",
+);
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
