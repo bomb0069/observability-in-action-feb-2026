@@ -34,17 +34,20 @@ This lab demonstrates **Full Observability** with all three telemetry signals (t
 This lab demonstrates the **three pillars of observability** using OpenTelemetry Protocol (OTLP):
 
 ### 1. **Traces** - Request Journey
+
 - Track requests as they flow through multiple services
 - Each trace consists of spans representing operations
 - Propagated context links spans across services
 
 ### 2. **Metrics** - Performance Indicators
+
 - HTTP request duration, request rate, error rate
 - Database query performance
 - JVM/Node.js runtime metrics
 - Application-specific business metrics
 
 ### 3. **Logs** - Event Records
+
 - Application logs with trace context correlation
 - Structured logging for better querying
 - Automatic trace ID injection for correlation
@@ -136,6 +139,7 @@ curl http://localhost:8080/api/v1/users/1
 ```
 
 This single request generates:
+
 - **Traces**: Distributed trace across user-service → point-service → databases
 - **Metrics**: HTTP request duration, database query latency, JVM/Node.js metrics
 - **Logs**: Application logs with trace context (trace_id, span_id)
@@ -239,6 +243,7 @@ nodejs_eventloop_lag_seconds{service_name="point-service"}
 ### 5. Correlate Traces, Metrics, and Logs
 
 When viewing a trace in Tempo:
+
 1. Click on any span
 2. Look for **Logs** button to see correlated logs
 3. Click **Metrics** to see related metrics
@@ -316,14 +321,14 @@ OTEL_LOGS_EXPORTER: otlp
 
 ## Key Differences from Lab 15
 
-| Feature | Lab 15 | Lab 18 |
-|---------|--------|--------|
-| **Traces** | ✅ Enabled | ✅ Enabled |
-| **Metrics** | ❌ Not configured | ✅ Enabled |
-| **Logs** | ❌ Not configured | ✅ Enabled |
-| **OTLP Endpoint** | Traces only | All signals |
-| **Use Case** | Distributed tracing | Full observability |
-| **Correlation** | Traces only | Traces ↔ Metrics ↔ Logs |
+| Feature           | Lab 15              | Lab 18                  |
+| ----------------- | ------------------- | ----------------------- |
+| **Traces**        | ✅ Enabled          | ✅ Enabled              |
+| **Metrics**       | ❌ Not configured   | ✅ Enabled              |
+| **Logs**          | ❌ Not configured   | ✅ Enabled              |
+| **OTLP Endpoint** | Traces only         | All signals             |
+| **Use Case**      | Distributed tracing | Full observability      |
+| **Correlation**   | Traces only         | Traces ↔ Metrics ↔ Logs |
 
 ## Troubleshooting
 
@@ -350,6 +355,7 @@ OTEL_LOGS_EXPORTER: otlp
 ### No Metrics in Mimir/Prometheus
 
 1. **Check metrics exporter**:
+
    ```bash
    docker-compose logs user-service | grep -i metric
    ```
@@ -360,6 +366,7 @@ OTEL_LOGS_EXPORTER: otlp
 ### No Logs in Loki
 
 1. **Check logs exporter**:
+
    ```bash
    docker-compose logs user-service | grep -i log
    ```
