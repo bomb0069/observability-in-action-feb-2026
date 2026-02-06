@@ -65,14 +65,14 @@ The architecture includes:
 
 ### Head-Based vs Tail-Based Sampling
 
-| Aspect | Head-Based (Lab 16) | Tail-Based (Lab 17) |
-|--------|---------------------|---------------------|
-| **Decision Point** | At trace start | After trace completes |
-| **Can sample by error?** | ❌ No | ✅ Yes |
-| **Can sample by duration?** | ❌ No | ✅ Yes |
-| **Requires Collector?** | ❌ No | ✅ Yes |
-| **Memory usage** | Low | Higher (buffers traces) |
-| **Best for** | Simple sampling | Smart policies |
+| Aspect                      | Head-Based (Lab 16) | Tail-Based (Lab 17)     |
+| --------------------------- | ------------------- | ----------------------- |
+| **Decision Point**          | At trace start      | After trace completes   |
+| **Can sample by error?**    | ❌ No               | ✅ Yes                  |
+| **Can sample by duration?** | ❌ No               | ✅ Yes                  |
+| **Requires Collector?**     | ❌ No               | ✅ Yes                  |
+| **Memory usage**            | Low                 | Higher (buffers traces) |
+| **Best for**                | Simple sampling     | Smart policies          |
 
 ### Tail-Based Sampling Policies (Lab 17)
 
@@ -93,6 +93,7 @@ This lab uses three policies in the OpenTelemetry Collector:
 ### Expected Results
 
 For 1000 requests with ~5-20% error rate:
+
 - **All error traces**: ~100-200 traces (100% of errors)
 - **Sample of success**: ~80-90 traces (10% of success)
 - **Total**: ~180-290 traces vs 100 traces in Lab 16
@@ -122,23 +123,23 @@ The collector uses the `tail_sampling` processor with three policies:
 ```yaml
 processors:
   tail_sampling:
-    decision_wait: 10s  # Wait for trace to complete
-    num_traces: 10000   # Buffer size
-    
+    decision_wait: 10s # Wait for trace to complete
+    num_traces: 10000 # Buffer size
+
     policies:
       # Policy 1: Keep all error traces
       - name: error-traces
         type: status_code
         status_code:
           status_codes: [ERROR]
-      
+
       # Policy 2: Keep HTTP 5xx errors
       - name: error-attributes
         type: string_attribute
         string_attribute:
           key: http.status_code
           values: ["500", "502", "503", "504"]
-      
+
       # Policy 3: Sample 10% of success
       - name: probabilistic-policy
         type: probabilistic
@@ -350,11 +351,13 @@ Navigate to: http://localhost:3000
 Run this experiment:
 
 1. Generate 100 requests:
+
 ```bash
 for i in {1..100}; do curl -s http://localhost:8080/api/v1/users/$(shuf -i 1-20 -n 1) > /dev/null; done
 ```
 
 2. Count errors in application logs:
+
 ```bash
 docker-compose logs user-service 2>&1 | grep -c "FakeInternalException"
 docker-compose logs point-service 2>&1 | grep -c "Simulated error"
@@ -423,6 +426,7 @@ docker-compose logs point-service | grep traceparent
 ```
 
 Key difference from Lab 16:
+
 - **Lab 16 (head-based)**: Sampling decision in traceparent header
 - **Lab 17 (tail-based)**: All traces sent, collector decides later
 
@@ -438,7 +442,7 @@ Both services configured to send ALL traces:
 OTEL_SERVICE_NAME: user-service
 OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4317
 OTEL_TRACES_EXPORTER: otlp
-OTEL_TRACES_SAMPLER: always_on  # Send 100% to collector
+OTEL_TRACES_SAMPLER: always_on # Send 100% to collector
 ```
 
 **Point Service (Node.js)**:
@@ -447,7 +451,7 @@ OTEL_TRACES_SAMPLER: always_on  # Send 100% to collector
 OTEL_SERVICE_NAME: point-service
 OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4317
 OTEL_TRACES_EXPORTER: otlp
-OTEL_TRACES_SAMPLER: always_on  # Send 100% to collector
+OTEL_TRACES_SAMPLER: always_on # Send 100% to collector
 ```
 
 ### OpenTelemetry Collector Configuration
@@ -460,19 +464,19 @@ processors:
     decision_wait: 10s
     num_traces: 10000
     expected_new_traces_per_sec: 100
-    
+
     policies:
       - name: error-traces
         type: status_code
         status_code:
           status_codes: [ERROR]
-      
+
       - name: error-attributes
         type: string_attribute
         string_attribute:
           key: http.status_code
           values: ["500", "502", "503", "504"]
-      
+
       - name: probabilistic-policy
         type: probabilistic
         probabilistic:
@@ -520,26 +524,28 @@ exporters:
 
 ## Comparison: Lab 16 vs Lab 17
 
-| Aspect | Lab 16 (Head-Based) | Lab 17 (Tail-Based) |
-|--------|---------------------|---------------------|
-| **Sampling Location** | At trace start | After trace completes |
-| **Error Capture** | ~10% of errors | 100% of errors |
-| **Success Capture** | 10% of success | 10% of success |
-| **Requires Collector** | ❌ No | ✅ Yes |
-| **Total Traces** | ~100 (for 1000 req) | ~180-290 (for 1000 req) |
-| **Memory Usage** | Low | Medium (collector buffers) |
-| **Setup Complexity** | Simple | Medium |
-| **Best For** | Dev/Staging | Production |
+| Aspect                 | Lab 16 (Head-Based) | Lab 17 (Tail-Based)        |
+| ---------------------- | ------------------- | -------------------------- |
+| **Sampling Location**  | At trace start      | After trace completes      |
+| **Error Capture**      | ~10% of errors      | 100% of errors             |
+| **Success Capture**    | 10% of success      | 10% of success             |
+| **Requires Collector** | ❌ No               | ✅ Yes                     |
+| **Total Traces**       | ~100 (for 1000 req) | ~180-290 (for 1000 req)    |
+| **Memory Usage**       | Low                 | Medium (collector buffers) |
+| **Setup Complexity**   | Simple              | Medium                     |
+| **Best For**           | Dev/Staging         | Production                 |
 
 ### Example Numbers (1000 requests, 15% error rate)
 
 **Lab 16 (Head-Based)**:
+
 - All requests sampled at 10%
 - Error traces: ~15 (10% of 150 errors) ❌ **Miss 135 errors!**
 - Success traces: ~85 (10% of 850 success)
 - Total: ~100 traces
 
 **Lab 17 (Tail-Based)**:
+
 - Errors sampled at 100%, success at 10%
 - Error traces: ~150 (100% of 150 errors) ✅ **Never miss errors!**
 - Success traces: ~85 (10% of 850 success)
@@ -635,12 +641,14 @@ docker-compose up -d --build
 If you're not seeing all errors in Tempo:
 
 1. **Check decision_wait time**: Traces need to complete before sampling decision
+
    ```bash
    # Wait 10+ seconds after generating errors before querying
    sleep 12
    ```
 
 2. **Verify error status is set**: Check application logs
+
    ```bash
    docker-compose logs user-service | grep -i error
    docker-compose logs point-service | grep -i error
@@ -656,10 +664,11 @@ If you're not seeing all errors in Tempo:
 If collector runs out of memory:
 
 1. **Reduce buffer size** in `otel-collector-config.yaml`:
+
    ```yaml
    tail_sampling:
-     num_traces: 5000  # Reduce from 10000
-     decision_wait: 5s  # Reduce from 10s
+     num_traces: 5000 # Reduce from 10000
+     decision_wait: 5s # Reduce from 10s
    ```
 
 2. **Restart collector**:
@@ -679,6 +688,7 @@ policies:
 ```
 
 Then restart:
+
 ```bash
 docker-compose restart otel-collector
 ```
@@ -708,7 +718,7 @@ You can add more sophisticated policies to `otel-collector-config.yaml`:
 - name: slow-requests
   type: latency
   latency:
-    threshold_ms: 1000  # Keep traces > 1 second
+    threshold_ms: 1000 # Keep traces > 1 second
 ```
 
 ### Sample Specific Endpoints
@@ -719,7 +729,7 @@ You can add more sophisticated policies to `otel-collector-config.yaml`:
   string_attribute:
     key: http.target
     values:
-      - "/api/v1/users/1"  # Always keep user 1 requests
+      - "/api/v1/users/1" # Always keep user 1 requests
 ```
 
 ### Composite Policy (AND logic)

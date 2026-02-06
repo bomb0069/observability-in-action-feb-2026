@@ -19,7 +19,7 @@ processors:
     num_traces: 10000
     # Expected number of new traces per second
     expected_new_traces_per_sec: 100
-    
+
     policies:
       # Policy 1: Always keep error traces
       - name: error-traces
@@ -27,7 +27,7 @@ processors:
         status_code:
           status_codes:
             - ERROR
-      
+
       # Policy 2: Always keep traces with specific error attributes
       - name: error-attributes
         type: string_attribute
@@ -38,7 +38,7 @@ processors:
             - "502"
             - "503"
             - "504"
-      
+
       # Policy 3: Sample 10% of successful traces
       - name: probabilistic-policy
         type: probabilistic
