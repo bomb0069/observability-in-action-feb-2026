@@ -147,7 +147,7 @@ This single request generates:
 **Load Testing** (generates continuous telemetry):
 
 ```bash
-k6 run scripts/load.js
+docker run --rm -i grafana/k6 run - <scripts/load.js
 ```
 
 ## Viewing Telemetry in Grafana

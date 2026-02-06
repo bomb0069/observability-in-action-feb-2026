@@ -155,7 +155,7 @@ curl http://localhost:8001/health
 Generate traffic to observe sampling behavior:
 
 ```bash
-k6 run scripts/load.js
+docker run --rm -i grafana/k6 run - <scripts/load.js
 ```
 
 The load test will:

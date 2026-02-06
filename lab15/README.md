@@ -124,7 +124,7 @@ curl http://localhost:8080/api/v1/users/1
 **Load Testing** (generates multiple distributed traces):
 
 ```bash
-k6 run scripts/load.js
+docker run --rm -i grafana/k6 run - <scripts/load.js
 ```
 
 ## Viewing Traces in Grafana
