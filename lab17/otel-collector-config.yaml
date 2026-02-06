@@ -43,7 +43,7 @@ processors:
       - name: probabilistic-policy
         type: probabilistic
         probabilistic:
-          sampling_percentage: 10
+          sampling_percentage: 1
 
 exporters:
   otlp:

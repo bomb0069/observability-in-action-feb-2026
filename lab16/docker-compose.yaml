@@ -16,7 +16,7 @@ services:
       OTEL_TRACES_EXPORTER: otlp
       # Head-based sampling: 10% of traces will be collected
       OTEL_TRACES_SAMPLER: traceidratio
-      OTEL_TRACES_SAMPLER_ARG: "0.1"
+      OTEL_TRACES_SAMPLER_ARG: "0.01"
     ports:
       - 8080:8080
     depends_on:
