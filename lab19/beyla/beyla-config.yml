@@ -1,0 +1,54 @@
+# Beyla Configuration for eBPF-based Auto-Instrumentation
+
+# Discovery configuration - what processes to instrument
+discovery:
+  services:
+    # Instrument Java Spring Boot service (user-service)
+    - name: user-service
+      open_ports: 8080
+      exe_path_regexp: "java"
+      k8s_namespace: ""
+      k8s_pod_name: ""
+    # Instrument Node.js Express service (point-service)
+    - name: point-service
+      open_ports: 8001
+      exe_path_regexp: "node"
+      k8s_namespace: ""
+      k8s_pod_name: ""
+
+# OTEL exporter configuration
+otel_traces_export:
+  endpoint: http://localhost:4317
+  protocol: grpc
+  insecure_skip_verify: true
+
+otel_metrics_export:
+  endpoint: http://localhost:4317
+  protocol: grpc
+  insecure_skip_verify: true
+  interval: 30s
+
+# Network instrumentation
+network:
+  enable: true
+  cidrs:
+    - 0.0.0.0/0
+
+# Application-level instrumentation
+attributes:
+  kubernetes:
+    enable: false
+  instance_id:
+    dns: false
+
+# Logging
+log_level: info
+
+# Routes configuration for HTTP services
+routes:
+  unmatched: heuristic # Use heuristic matching for unmatched routes
+  patterns:
+    - /api/users
+    - /api/users/{id}
+    - /api/points
+    - /api/points/{id}

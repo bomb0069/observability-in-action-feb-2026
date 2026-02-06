@@ -1,0 +1,18 @@
+# build stage
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /home/app
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+
+RUN ./mvnw install -DskipTests
+
+# Copy artifact to final stage (without OpenTelemetry agent)
+FROM eclipse-temurin:21-jre
+
+COPY --from=build /home/app/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar","app.jar"]
