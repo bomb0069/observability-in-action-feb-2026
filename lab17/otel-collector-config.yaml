@@ -1,0 +1,59 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+  # Tail-based sampling: Make sampling decision AFTER trace completes
+  tail_sampling:
+    # Wait for trace to complete before making decision
+    decision_wait: 10s
+    # Number of traces to keep in memory
+    num_traces: 10000
+    # Expected number of new traces per second
+    expected_new_traces_per_sec: 100
+    
+    policies:
+      # Policy 1: Always keep error traces
+      - name: error-traces
+        type: status_code
+        status_code:
+          status_codes:
+            - ERROR
+      
+      # Policy 2: Always keep traces with specific error attributes
+      - name: error-attributes
+        type: string_attribute
+        string_attribute:
+          key: http.status_code
+          values:
+            - "500"
+            - "502"
+            - "503"
+            - "504"
+      
+      # Policy 3: Sample 10% of successful traces
+      - name: probabilistic-policy
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
+
+exporters:
+  otlp:
+    endpoint: lgtm:4317
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [tail_sampling, batch]
+      exporters: [otlp]
