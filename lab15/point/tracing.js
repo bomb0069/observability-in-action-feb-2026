@@ -14,9 +14,10 @@ const {
 
 // Configure OTLP Exporter
 const traceExporter = new OTLPTraceExporter({
-  url: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 
-       process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 
-       "http://localhost:4317",
+  url:
+    process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+    process.env.OTEL_EXPORTER_OTLP_ENDPOINT ||
+    "http://localhost:4317",
 });
 
 // Initialize OpenTelemetry SDK
