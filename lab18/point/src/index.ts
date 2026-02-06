@@ -34,7 +34,9 @@ app.get("/api/v1/points", async (req: Request, res: Response) => {
     const [rows] = await pool.query(
       "SELECT * FROM points ORDER BY created_at DESC",
     );
-    console.log(`Successfully fetched ${Array.isArray(rows) ? rows.length : 0} points`);
+    console.log(
+      `Successfully fetched ${Array.isArray(rows) ? rows.length : 0} points`,
+    );
     res.json(rows);
   } catch (error: any) {
     console.error("Error fetching points:", error);
@@ -48,7 +50,7 @@ app.get("/api/v1/points", async (req: Request, res: Response) => {
 app.get("/api/v1/points/user/:userId", async (req: Request, res: Response) => {
   const userId = parseInt(req.params.userId);
   console.log(`Fetching points for user: ${userId}`);
-  
+
   try {
     if (isNaN(userId)) {
       console.warn(`Invalid user ID provided: ${req.params.userId}`);
@@ -81,10 +83,12 @@ app.get(
   async (req: Request, res: Response) => {
     const userId = parseInt(req.params.userId);
     console.log(`Fetching total points for user: ${userId}`);
-    
+
     // Simulate request error (1 in 5 requests)
     if (Math.floor(Math.random() * errorSimulationRate) === 0) {
-      console.error(`Simulated error: Failed to fetch points for user ${userId}`);
+      console.error(
+        `Simulated error: Failed to fetch points for user ${userId}`,
+      );
       return res.status(500).json({ error: "Failed to fetch points for user" });
     }
 
@@ -113,9 +117,14 @@ app.get(
         totalPoints: rows[0].total_points || 0,
         transactionCount: rows[0].transaction_count || 0,
       });
-      console.log(`Successfully calculated total points for user ${userId}: ${rows[0].total_points || 0} points, ${rows[0].transaction_count || 0} transactions`);
+      console.log(
+        `Successfully calculated total points for user ${userId}: ${rows[0].total_points || 0} points, ${rows[0].transaction_count || 0} transactions`,
+      );
     } catch (error: any) {
-      console.error(`Error calculating total points for user ${userId}:`, error);
+      console.error(
+        `Error calculating total points for user ${userId}:`,
+        error,
+      );
       res
         .status(500)
         .json({ error: "Internal server error", message: error.message });
@@ -134,14 +143,18 @@ app.post("/api/v1/points", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "userId and points are required" });
     }
 
-    console.log(`Adding ${points} points to user ${userId}: ${description || "Points added"}`);
-    
+    console.log(
+      `Adding ${points} points to user ${userId}: ${description || "Points added"}`,
+    );
+
     const [result]: any = await pool.query(
       "INSERT INTO points (user_id, points, description) VALUES (?, ?, ?)",
       [userId, points, description || "Points added"],
     );
 
-    console.log(`Successfully added points for user ${userId}, insert ID: ${result.insertId}`);
+    console.log(
+      `Successfully added points for user ${userId}, insert ID: ${result.insertId}`,
+    );
     res.status(201).json({
       id: result.insertId,
       userId,
@@ -163,7 +176,6 @@ app.listen(port, () => {
     `Database: ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`,
   );
   console.log("Logging enabled with OpenTelemetry integration");
-});
 });
 
 // Graceful shutdown
