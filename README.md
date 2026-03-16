@@ -12,8 +12,8 @@ Lab series สำหรับการเรียนรู้ ELK Stack (Elasti
 แต่ละ lab มี README.md พร้อม instructions การใช้งานแบบละเอียด
 
 ```bash
-# เข้าไปใน lab ที่ต้องการ
-cd lab00  # หรือ lab03-lab10 (Logs) / lab01, lab02, lab11+ (Metrics)
+# เข้าไปใน lab ที่ต้องการ (ตัวอย่าง)
+cd 02_log/01_elk_filebeat_flog
 
 # Start services
 docker-compose up -d
@@ -29,33 +29,50 @@ docker-compose down
 
 Labs ออกแบบให้เรียนรู้แบบ progressive:
 
-**Warm-up Utilities:**
+### 00_warmup — Warm-up Utilities
 
-0. **Lab00**: Pre-pull images ที่ใช้ในทุก lab (logs + metrics) เพื่อลดเวลารอ
-1. **Lab01**: Spring Boot metrics quickstart (Prometheus + Grafana dashboard แบบสำเร็จรูป)
-2. **Lab02**: OpenTelemetry quick run (multi-service OTLP pipeline + LGTM bundle)
+0. **[Lab00 - Image Warm-Up](00_warmup/01_image_pull/)**: Pre-pull images ที่ใช้ในทุก lab (logs + metrics) เพื่อลดเวลารอ
 
-**Logs Track (Labs 03-10):**
+### 01_quickstart — Quickstart
 
-1. **Lab03**: เริ่มต้นกับ basic ELK stack
-2. **Lab04**: เพิ่ม visualizations และ dashboards
-3. **Lab05**: เพิ่ม multiple applications กับ different log formats
-4. **Lab06**: เพิ่ม automatic setup capabilities
-5. **Lab07**: รวม applications ใน unified dashboard (separate visualizations)
-6. **Lab08**: รวม applications ใน unified visualizations (same charts with split series)
-7. **Lab09**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail)
-8. **Lab10**: Unified multi-application logs with LGTM stack (split series)
+1. **[Lab01 - Spring Boot Metrics Quickstart](01_quickstart/01_spring_boot_metrics/)**: Spring Boot metrics quickstart (Prometheus + Grafana dashboard แบบสำเร็จรูป)
+2. **[Lab02 - OpenTelemetry Quick Run](01_quickstart/02_opentelemetry_run/)**: OpenTelemetry quick run (multi-service OTLP pipeline + LGTM bundle)
 
-**Metrics Track (Labs 11+):**
+### 02_log — Logs Track (Labs 03-10)
 
-9. **Lab11**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
-10. **Lab12**: Postgres exporter + database dashboards alongside application metrics
-11. **Lab13**: Node exporter + infrastructure dashboards to correlate system resources
-12. **Lab14**: OpenTelemetry distributed tracing with LGTM stack (Tempo + auto-instrumentation)
+3. **[Lab03 - ELK Stack with Filebeat and Flog](02_log/01_elk_filebeat_flog/)**: เริ่มต้นกับ basic ELK stack
+4. **[Lab04 - Kibana Visualizations](02_log/02_kibana_visualizations/)**: เพิ่ม visualizations และ dashboards
+5. **[Lab05 - Multi-Application Log Collection](02_log/03_multi_app_collection/)**: เพิ่ม multiple applications กับ different log formats
+6. **[Lab06 - Auto-Setup Kibana](02_log/04_auto_setup_kibana/)**: เพิ่ม automatic setup capabilities
+7. **[Lab07 - Unified Dashboard](02_log/05_unified_dashboard/)**: รวม applications ใน unified dashboard (separate visualizations)
+8. **[Lab08 - Unified ECS Visualizations](02_log/06_unified_ecs/)**: รวม applications ใน unified visualizations (same charts with split series)
+9. **[Lab09 - Grafana with LGTM Stack](02_log/07_lgtm_grafana/)**: Grafana visualizations with LGTM stack (Loki + Grafana + Promtail)
+10. **[Lab10 - Unified Multi-App LGTM](02_log/08_lgtm_multi_app/)**: Unified multi-application logs with LGTM stack (split series)
+
+### 03_metrics — Metrics Track (Labs 11-13)
+
+11. **[Lab11 - Spring Boot Prometheus](03_metrics/01_spring_boot_prometheus/)**: Spring Boot Micrometer metrics with Prometheus + Grafana dashboarding
+12. **[Lab12 - Postgres Exporter](03_metrics/02_postgres_exporter/)**: Postgres exporter + database dashboards alongside application metrics
+13. **[Lab13 - Node Exporter](03_metrics/03_node_exporter/)**: Node exporter + infrastructure dashboards to correlate system resources
+
+### 04_tracing — Tracing Track (Labs 14-17)
+
+14. **[Lab14 - Distributed Tracing Intro](04_tracing/01_distributed_tracing_intro/)**: OpenTelemetry distributed tracing with LGTM stack (Tempo + auto-instrumentation)
+15. **[Lab15 - Multi-Service Tracing](04_tracing/02_multi_service_tracing/)**: Multi-service distributed tracing
+16. **[Lab16 - Multi-Service Expanded](04_tracing/03_multi_service_expanded/)**: Multi-service tracing expanded
+17. **[Lab17 - Trace Sampling](04_tracing/04_trace_sampling/)**: Trace sampling techniques
+
+### 05_instrumentation — Instrumentation Track (Labs 18-20)
+
+18. **[Lab18 - Full OTLP](05_instrumentation/01_full_otlp/)**: Full OTLP instrumentation (agents + logs)
+19. **[Lab19 - eBPF Beyla](05_instrumentation/02_ebpf_beyla/)**: eBPF auto-instrumentation with Beyla
+20. **[Lab20 - Log-Derived Metrics](05_instrumentation/03_log_derived_metrics/)**: Log-derived metrics & function execution timing
 
 ## Labs Overview
 
-### [Lab00 - Image Warm-Up for ELK, LGTM & Metrics Labs](lab00/)
+### 00_warmup
+
+#### [Lab00 - Image Warm-Up for ELK, LGTM & Metrics Labs](00_warmup/01_image_pull/)
 
 Lab สำหรับ pre-pull container images ทั้งหมดที่ใช้ใน labs 03-13 (logs + metrics) ช่วยให้ตอนเริ่ม lab จริงไม่ต้องรอ docker ดึง image ใหม่
 
@@ -68,7 +85,18 @@ Lab สำหรับ pre-pull container images ทั้งหมดที่�
 
 ---
 
-### [Lab02 - OpenTelemetry Quick Run](lab02/)
+### 01_quickstart
+
+#### [Lab01 - Spring Boot Metrics Quickstart](01_quickstart/01_spring_boot_metrics/)
+
+**Key Features:**
+
+- Spring Boot `user-service` + PostgreSQL backend พร้อม Micrometer actuator endpoint `/actuator/prometheus`
+- Prometheus scrape ทุก 5 วินาทีและ Grafana provisioning datasource UID `prometheus`
+- Dashboard พร้อมใช้ (`Spring Boot Metrics (Lab01)`) สร้างจาก Grafana Lab ID 14430
+- มีสคริปต์ `grafana/k6` load test เพื่อกระตุ้น throughput / error / latency metrics
+
+#### [Lab02 - OpenTelemetry Quick Run](01_quickstart/02_opentelemetry_run/)
 
 Lab สำหรับทดลองส่ง OTLP signals จากหลายภาษาไปยัง LGTM stack + Prometheus ภายใน compose เดียว เหมาะกับการ warm-up ก่อนลงรายละเอียดในแต่ละ track
 
@@ -81,11 +109,11 @@ Lab สำหรับทดลองส่ง OTLP signals จากหลา�
 
 ---
 
-## Logs Track (Labs 03-10)
+### 02_log — Logs Track
 
 โฟกัสการเก็บและวิเคราะห์ **logs** โดยไล่จาก ELK (Labs 03-08) ไปจนถึง LGTM (Labs 09-10)
 
-### [Lab03 - ELK Stack with Filebeat and Flog](lab03/)
+#### [Lab03 - ELK Stack with Filebeat and Flog](02_log/01_elk_filebeat_flog/)
 
 Lab พื้นฐานสำหรับทดสอบการเก็บ log จาก application ผ่าน Filebeat, Logstash ไปยัง Elasticsearch และแสดงผลที่ Kibana
 
@@ -99,7 +127,7 @@ Lab พื้นฐานสำหรับทดสอบการเก็บ 
 
 ---
 
-### [Lab04 - Kibana Visualizations for Apache Combined Logs](lab04/)
+#### [Lab04 - Kibana Visualizations for Apache Combined Logs](02_log/02_kibana_visualizations/)
 
 Lab สำหรับสร้าง visualizations และ dashboards บน Kibana เพื่อวิเคราะห์ Apache combined format logs
 
@@ -115,7 +143,7 @@ Lab สำหรับสร้าง visualizations และ dashboards บน
 
 ---
 
-### [Lab05 - Multi-Application Log Collection and Visualization](lab05/)
+#### [Lab05 - Multi-Application Log Collection and Visualization](02_log/03_multi_app_collection/)
 
 Lab สำหรับทดสอบการเก็บ logs จาก multiple applications ที่มี format ต่างกัน และแสดงผลรวมกันบน Kibana
 
@@ -131,7 +159,7 @@ Lab สำหรับทดสอบการเก็บ logs จาก multip
 
 ---
 
-### [Lab06 - Auto-Setup Kibana Index Patterns for Multi-Application Logs](lab06/)
+#### [Lab06 - Auto-Setup Kibana Index Patterns for Multi-Application Logs](02_log/04_auto_setup_kibana/)
 
 Lab สำหรับทดสอบการเก็บ logs จาก multiple applications พร้อม **automatic Kibana index pattern creation**
 
@@ -145,7 +173,7 @@ Lab สำหรับทดสอบการเก็บ logs จาก multip
 
 ---
 
-### [Lab07 - Unified Dashboard for Multi-Application Logs](lab07/)
+#### [Lab07 - Unified Dashboard for Multi-Application Logs](02_log/05_unified_dashboard/)
 
 Lab สำหรับแสดง logs จาก multiple applications (flog และ flog2) ใน **dashboard เดียวกัน** พร้อม comparison visualizations
 
@@ -159,7 +187,7 @@ Lab สำหรับแสดง logs จาก multiple applications (flog �
 
 ---
 
-### [Lab08 - Unified Visualizations with ECS Normalization](lab08/)
+#### [Lab08 - Unified Visualizations with ECS Normalization](02_log/06_unified_ecs/)
 
 Lab สำหรับแสดง logs จาก multiple applications ใน **visualizations เดียวกัน** โดยใช้ ECS field normalization และ split series aggregation
 
@@ -175,7 +203,7 @@ Lab สำหรับแสดง logs จาก multiple applications ใน *
 
 ---
 
-### [Lab09 - Grafana Visualizations for Apache Combined Logs with LGTM Stack](lab09/)
+#### [Lab09 - Grafana Visualizations for Apache Combined Logs with LGTM Stack](02_log/07_lgtm_grafana/)
 
 Lab สำหรับสร้าง visualizations และ dashboards บน Grafana เพื่อวิเคราะห์ Apache combined format logs โดยใช้ LGTM Stack (Loki, Grafana, Tempo, Mimir)
 
@@ -193,7 +221,7 @@ Lab สำหรับสร้าง visualizations และ dashboards บน
 
 ---
 
-### [Lab10 - Unified Multi-Application Logs with LGTM Stack](lab10/)
+#### [Lab10 - Unified Multi-Application Logs with LGTM Stack](02_log/08_lgtm_multi_app/)
 
 Lab สำหรับรวม logs จาก multiple applications (Apache และ JSON format) และแสดงใน **visualizations เดียวกัน** บน Grafana โดยใช้ LGTM Stack พร้อม split series aggregation
 
@@ -212,29 +240,11 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 
 ---
 
-## Metrics Track (Labs 01-02 & 11+)
+### 03_metrics — Metrics Track
 
 ต่อยอดจาก log pipeline มาสู่ **metrics observability** เริ่มด้วย Lab01-02 (quickstart + OpenTelemetry pipeline) ก่อนจะลงลึกกับ Lab11-Lab13 ที่เพิ่มฐานข้อมูลและ infrastructure metrics
 
-### [Lab01 - Spring Boot Metrics Quickstart](lab01/)
-
-**Key Features:**
-
-- Spring Boot `user-service` + PostgreSQL backend พร้อม Micrometer actuator endpoint `/actuator/prometheus`
-- Prometheus scrape ทุก 5 วินาทีและ Grafana provisioning datasource UID `prometheus`
-- Dashboard พร้อมใช้ (`Spring Boot Metrics (Lab01)`) สร้างจาก Grafana Lab ID 14430
-- มีสคริปต์ `grafana/k6` load test เพื่อกระตุ้น throughput / error / latency metrics
-
-### [Lab02 - OpenTelemetry Quick Run](lab02/)
-
-**Key Features:**
-
-- Compose เดียวรวม Spring Boot, Go, Node.js services พร้อม Postgres/MySQL
-- ใช้ `grafana/otel-lgtm` เป็น collector + visualization (OTLP 4317/4318, Grafana 3000)
-- Prometheus job สำหรับ `user-service` ช่วยให้เห็น Micrometer metrics โดยตรง
-- มีตัวอย่าง `curl` load เพื่อสร้าง traces/logs/metrics ให้สำรวจใน Grafana Explore
-
-### [Lab11 - Spring Boot Metrics with Prometheus & Grafana](lab11/)
+#### [Lab11 - Spring Boot Metrics with Prometheus & Grafana](03_metrics/01_spring_boot_prometheus/)
 
 **Key Features:**
 
@@ -244,7 +254,7 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - Metrics panels ครอบคลุม throughput, latency, error %, CPU, heap usage, live threads ฯลฯ
 - Built-in load test: `docker run --rm -i grafana/k6 run - <scripts/load.js` เพื่อกระตุ้น metric spikes แล้วสังเกตผลบน Grafana
 
-### [Lab12 - Postgres Exporter + Database Dashboards](lab12/)
+#### [Lab12 - Postgres Exporter + Database Dashboards](03_metrics/02_postgres_exporter/)
 
 **Key Features:**
 
@@ -255,7 +265,7 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - ยังคงใช้ load script (`docker run --rm -i grafana/k6 run - <scripts/load.js`) เพื่อกระตุ้นทั้ง application และ database metrics
 - เหมาะสำหรับสาธิต full-stack observability (app + database layer)
 
-### [Lab13 - Node Exporter + Infrastructure Metrics](lab13/)
+#### [Lab13 - Node Exporter + Infrastructure Metrics](03_metrics/03_node_exporter/)
 
 **Key Features:**
 
@@ -265,7 +275,11 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - สาธิตมุมมอง "triangulate" ปัญหา: load script → app metrics → database metrics → infrastructure metrics
 - ใช้สคริปต์ k6 เดิมในการสร้างภาระงานเพื่อให้เห็นความสัมพันธ์ของแต่ละเลเยอร์
 
-### [Lab14 - OpenTelemetry Distributed Tracing with LGTM](lab14/)
+---
+
+### 04_tracing — Tracing Track
+
+#### [Lab14 - OpenTelemetry Distributed Tracing with LGTM](04_tracing/01_distributed_tracing_intro/)
 
 **Key Features:**
 
@@ -280,4 +294,30 @@ Lab สำหรับรวม logs จาก multiple applications (Apache แ
 - All-in-one observability: Metrics (Mimir) + Traces (Tempo) + Logs (Loki)
 - สาธิตการ correlate ระหว่าง traces กับ metrics และ logs
 
-> Lab15+ (coming soon) จะต่อยอดเรื่อง multi-service tracing, custom spans, trace-based alerting และ SLO monitoring
+#### [Lab15 - Multi-Service Distributed Tracing](04_tracing/02_multi_service_tracing/)
+
+Multi-service distributed tracing ต่อยอดจาก Lab14
+
+#### [Lab16 - Multi-Service Tracing Expanded](04_tracing/03_multi_service_expanded/)
+
+Multi-service tracing expanded with additional services and scenarios
+
+#### [Lab17 - Trace Sampling Techniques](04_tracing/04_trace_sampling/)
+
+Trace sampling techniques สำหรับ production environments
+
+---
+
+### 05_instrumentation — Instrumentation Track
+
+#### [Lab18 - Full OTLP Instrumentation](05_instrumentation/01_full_otlp/)
+
+Full OTLP instrumentation with agents and log correlation
+
+#### [Lab19 - eBPF Auto-Instrumentation with Beyla](05_instrumentation/02_ebpf_beyla/)
+
+eBPF-based auto-instrumentation with Beyla (kernel-level, no agents needed in application code)
+
+#### [Lab20 - Log-Derived Metrics & Function Timing](05_instrumentation/03_log_derived_metrics/)
+
+Log-derived metrics and function execution timing
