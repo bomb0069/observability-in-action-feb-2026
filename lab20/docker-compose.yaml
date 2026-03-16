@@ -1,0 +1,145 @@
+services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: bomb0069/observability-user-service:lab20-1.0.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      POINT_SERVICE_URL: http://point-service:8001
+      STORE_SERVICE_URL: http://store-service:8000
+      OTEL_SERVICE_NAME: user-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: service.name=user-service
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+    ports:
+      - 8080:8080
+    depends_on:
+      lgtm:
+        condition: service_started
+      user-db:
+        condition: service_healthy
+      point-service:
+        condition: service_started
+      store-service:
+        condition: service_started
+    restart: always
+
+  user-db:
+    image: "postgres:16.3"
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./user/tearup/init.sql:/docker-entrypoint-initdb.d/user.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $$POSTGRES_DB -h localhost -p 5432 -U $$POSTGRES_USER",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  point-service:
+    build:
+      context: ./point
+      dockerfile: Dockerfile
+    image: bomb0069/observability-point-service:lab20-1.0.0
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root_password
+      DB_NAME: point_db
+      OTEL_SERVICE_NAME: point-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: service.name=point-service
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+    ports:
+      - 8001:8001
+    depends_on:
+      lgtm:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: always
+
+  store-service:
+    build:
+      context: ./store
+      dockerfile: Dockerfile
+    image: bomb0069/observability-store-service:lab20-1.0.0
+    environment:
+      DB_CONNECTION: user:password@(db:3306)/store
+      SERVICE_NAME: store-service
+      INSECURE_MODE: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: lgtm:4317
+    ports:
+      - 8000:8000
+    depends_on:
+      lgtm:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: "mysql:8.3.0"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: point_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./store/tearup/init.sql:/docker-entrypoint-initdb.d/01-store.sql
+      - ./store/tearup/grantall.sql:/docker-entrypoint-initdb.d/02-grantall.sql
+      - ./point/tearup/init.sql:/docker-entrypoint-initdb.d/03-point.sql
+    ports:
+      - "3306:3306"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-proot_password",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    restart: always

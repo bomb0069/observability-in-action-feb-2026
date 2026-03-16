@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/user
+    username: postgres
+    password: postgres
+
+point:
+  service:
+    url: http://localhost:8001
+
+store:
+  service:
+    url: http://localhost:8000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,prometheus"
