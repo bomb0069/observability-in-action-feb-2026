@@ -1,0 +1,141 @@
+services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: user-service:beyla-1.0.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - 8080:8080
+    depends_on:
+      user-db:
+        condition: service_healthy
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    pid: host
+
+  user-db:
+    image: "postgres:16.3"
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./user/tearup/init.sql:/docker-entrypoint-initdb.d/user.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $$POSTGRES_DB -h localhost -p 5432 -U $$POSTGRES_USER",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+
+  store-service:
+    build:
+      context: ./store
+      dockerfile: Dockerfile
+    image: store-service:beyla-0.0.1
+    container_name: store-service
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: user:password@(db:3306)/store
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    pid: host
+
+  point-service:
+    build:
+      context: ./point
+      dockerfile: Dockerfile
+    image: point-service:beyla-0.0.1
+    container_name: point-service
+    ports:
+      - "8001:8001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: point_db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    pid: host
+
+  db:
+    image: mysql:8.3.0
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./store/tearup/init.sql:/docker-entrypoint-initdb.d/store.sql
+      - ./store/tearup/grantall.sql:/docker-entrypoint-initdb.d/grantall.sql
+      - ./point/tearup/init.sql:/docker-entrypoint-initdb.d/point.sql
+    ports:
+      - "3306:3306"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  # Beyla - eBPF-based auto-instrumentation (zero-code)
+  beyla:
+    image: grafana/beyla:latest
+    command:
+      - /beyla
+      - --config=/config/beyla-config.yml
+    volumes:
+      - ./beyla:/config:ro
+      - /sys/kernel/debug:/sys/kernel/debug:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+      - SYS_RESOURCE
+    privileged: true
+    pid: host
+    network_mode: host
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+    depends_on:
+      lgtm:
+        condition: service_started
+      user-service:
+        condition: service_started
+      store-service:
+        condition: service_started
+      point-service:
+        condition: service_started
+    restart: always
+
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    restart: always

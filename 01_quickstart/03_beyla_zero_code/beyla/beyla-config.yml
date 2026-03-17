@@ -1,0 +1,45 @@
+# Beyla Configuration for eBPF-based Auto-Instrumentation
+# Discovers and instruments all 3 microservices without any code changes
+
+# Discovery configuration - what processes to instrument
+discovery:
+  services:
+    # Instrument Java Spring Boot service (user-service)
+    - name: user-service
+      open_ports: 8080
+      exe_path_regexp: "java"
+    # Instrument Go binary (store-service)
+    - name: store-service
+      open_ports: 8000
+      exe_path_regexp: "app"
+    # Instrument Node.js Express service (point-service)
+    - name: point-service
+      open_ports: 8001
+      exe_path_regexp: "node"
+
+# OTEL trace exporter configuration
+otel_traces_export:
+  endpoint: http://localhost:4317
+  protocol: grpc
+
+otel_metrics_export:
+  endpoint: http://localhost:4317
+  protocol: grpc
+  interval: 30s
+
+# Routes configuration for HTTP services
+routes:
+  unmatched: heuristic
+  patterns:
+    - /api/v1/users
+    - /api/v1/users/{id}
+    - /api/v1/product
+    - /api/v1/product/{id}
+    - /api/v1/points
+    - /api/v1/points/user/{id}
+    - /api/v1/points/user/{id}/total
+    - /api/v1/health
+    - /health
+
+# Logging
+log_level: info
