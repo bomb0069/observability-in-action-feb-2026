@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Observability workshop lab series (21 labs: lab00–lab20) teaching ELK Stack and LGTM Stack concepts progressively. Written primarily in Thai with English technical terms. Each lab is a self-contained Docker Compose environment. Labs are organized in a 2-layer grouped directory structure: `XX_group/YY_description/`.
+Observability workshop lab series (24 labs: lab00–lab20 + 3 profiling labs) teaching ELK Stack and LGTM Stack concepts progressively. Written primarily in Thai with English technical terms. Each lab is a self-contained Docker Compose environment. Labs are organized in a 2-layer grouped directory structure: `XX_group/YY_description/`.
 
 ## Common Commands
 
@@ -42,6 +42,9 @@ There are no global test suites or linters — each lab is independent.
 | 05_instrumentation | `01_full_otlp/` | Full OTLP instrumentation (agents + logs) | LGTM + OTel agents |
 | 05_instrumentation | `02_ebpf_beyla/` | eBPF auto-instrumentation | Beyla (no agents in apps) |
 | 05_instrumentation | `03_log_derived_metrics/` | Log-derived metrics & function timing | LGTM + OTel |
+| 06_profiling | `01_pyroscope_intro/` | SDK-based continuous profiling | Pyroscope, LGTM |
+| 06_profiling | `02_profiles_and_traces/` | Span profiles (traces + profiling) | Pyroscope, OTel, LGTM |
+| 06_profiling | `03_ebpf_profiling/` | eBPF zero-code profiling with Alloy | Alloy, Pyroscope, LGTM |
 
 ### Multi-Service Application (01_quickstart/02_opentelemetry_run, 04_tracing/*, 05_instrumentation/*)
 
@@ -56,7 +59,7 @@ Each service has `tearup/init.sql` for DB schema initialization mounted into `/d
 ### Docker Compose Conventions
 
 - `.yml` extension: 00_warmup/01_image_pull, 02_log/*
-- `.yaml` extension: 01_quickstart/*, 03_metrics/*, 04_tracing/*, 05_instrumentation/*
+- `.yaml` extension: 01_quickstart/*, 03_metrics/*, 04_tracing/*, 05_instrumentation/*, 06_profiling/*
 - Container names are prefixed per-lab in early labs (e.g., `lab00-elasticsearch`) to avoid conflicts
 - Grafana provisioning follows: `grafana/provisioning/{datasources,dashboards}/` + `grafana/dashboards/*.json`
 - Prometheus configs: `prometheus/prometheus.yml`
@@ -71,6 +74,7 @@ Each service has `tearup/init.sql` for DB schema initialization mounted into `/d
 | 8080 | user-service (Spring Boot) |
 | 9090 | Prometheus |
 | 9200 | Elasticsearch |
+| 4040 | Pyroscope |
 | 4317/4318 | OTLP gRPC/HTTP |
 
 ### OpenTelemetry Instrumentation Approaches

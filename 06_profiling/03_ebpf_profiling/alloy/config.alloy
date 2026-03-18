@@ -1,0 +1,30 @@
+discovery.docker "local" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "apps" {
+  targets = discovery.docker.local.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(user-service|store-service|point-service).*"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "service_name"
+  }
+}
+
+pyroscope.ebpf "default" {
+  targets    = discovery.relabel.apps.output
+  forward_to = [pyroscope.write.local.receiver]
+}
+
+pyroscope.write "local" {
+  endpoint {
+    url = "http://localhost:4040"
+  }
+}
