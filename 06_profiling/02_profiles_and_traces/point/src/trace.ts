@@ -16,7 +16,7 @@ const collectorOptions = {
 const exporter = new OTLPTraceExporter(collectorOptions);
 
 export const otelSDK = new NodeSDK({
-  spanProcessor: new SimpleSpanProcessor(exporter),
+  spanProcessor: new SimpleSpanProcessor(exporter) as any,
 
   instrumentations: [
     new HttpInstrumentation(),
