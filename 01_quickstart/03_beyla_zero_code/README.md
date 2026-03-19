@@ -1,8 +1,8 @@
-# Beyla Zero-Code Auto-Instrumentation (Lab03)
+# Beyla Zero-Code Auto-Instrumentation (Lab01-03)
 
-Lab03 เป็น quickstart สำหรับ **Beyla eBPF** — แสดงให้เห็นว่าแอปเดิม 3 ตัว (Spring Boot + Go + Node.js) สามารถส่ง telemetry ได้ **โดยไม่ต้องเพิ่ม agent หรือ SDK** ใด ๆ เลย Beyla ใช้ eBPF ดักจับ HTTP traffic ในระดับ kernel แล้วส่ง traces + metrics ผ่าน OTLP ไปยัง LGTM stack โดยอัตโนมัติ
+Lab01-03 เป็น quickstart สำหรับ **Beyla eBPF** — แสดงให้เห็นว่าแอปเดิม 3 ตัว (Spring Boot + Go + Node.js) สามารถส่ง telemetry ได้ **โดยไม่ต้องเพิ่ม agent หรือ SDK** ใด ๆ เลย Beyla ใช้ eBPF ดักจับ HTTP traffic ในระดับ kernel แล้วส่ง traces + metrics ผ่าน OTLP ไปยัง LGTM stack โดยอัตโนมัติ
 
-> เปรียบเทียบกับ Lab02 ที่ใช้ OpenTelemetry agents/SDKs (Java agent, Go OTel SDK, NestJS OTel SDK) — lab นี้ทำ observability เดียวกันแต่แบบ **zero-code instrumentation**
+> เปรียบเทียบกับ Lab01-02 ที่ใช้ OpenTelemetry agents/SDKs (Java agent, Go OTel SDK, NestJS OTel SDK) — lab นี้ทำ observability เดียวกันแต่แบบ **zero-code instrumentation**
 
 ## Stack Components
 
@@ -89,9 +89,9 @@ docker run --rm -i grafana/k6 run - <scripts/load.js
     histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket[5m])) by (le, http_target))
     ```
 
-## เปรียบเทียบ Lab02 (OTel Agents) vs Lab03 (Beyla eBPF)
+## เปรียบเทียบ Lab01-02 (OTel Agents) vs Lab01-03 (Beyla eBPF)
 
-| ด้าน | Lab02 (OTel Agents/SDKs) | Lab03 (Beyla eBPF) |
+| ด้าน | Lab01-02 (OTel Agents/SDKs) | Lab01-03 (Beyla eBPF) |
 |------|--------------------------|---------------------|
 | **Instrumentation** | Java agent, Go SDK, Node.js SDK | ไม่มี — Beyla ดักจับจาก kernel |
 | **Code changes** | ต้องเพิ่ม agent/SDK config | ไม่ต้องเปลี่ยน code เลย |
@@ -121,4 +121,4 @@ docker run --rm -i grafana/k6 run - <scripts/load.js
 docker compose down -v
 ```
 
-> Lab03 มีเป้าหมายเพื่อแสดง zero-code instrumentation ด้วย eBPF — เหมาะสำหรับกรณีที่ไม่สามารถแก้ไข code หรือ deployment ของแอปได้ แต่ยังต้องการ observability ในระดับ HTTP/network
+> Lab01-03 มีเป้าหมายเพื่อแสดง zero-code instrumentation ด้วย eBPF — เหมาะสำหรับกรณีที่ไม่สามารถแก้ไข code หรือ deployment ของแอปได้ แต่ยังต้องการ observability ในระดับ HTTP/network

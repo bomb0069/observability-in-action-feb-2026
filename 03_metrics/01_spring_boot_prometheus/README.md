@@ -1,6 +1,6 @@
-# Add Another Metrics (Lab11)
+# Add Another Metrics (Lab03-01)
 
-Lab11 เปิดหัวข้อ Metrics Observability โดยให้ Prometheus เก็บ Micrometer metrics จาก Spring Boot `user-service` แล้วแสดงผลบน Grafana dashboard ที่ยึดโครงมาจาก Grafana Lab ID **14430**.
+Lab03-01 เปิดหัวข้อ Metrics Observability โดยให้ Prometheus เก็บ Micrometer metrics จาก Spring Boot `user-service` แล้วแสดงผลบน Grafana dashboard ที่ยึดโครงมาจาก Grafana Lab ID **14430**.
 
 ## Stack Components
 
@@ -50,7 +50,7 @@ scrape_configs:
 Grafana ถูกตั้งค่า provisioning ไว้ใน `grafana/provisioning`:
 
 - **Datasource**: `Prometheus` (UID `prometheus`) ชี้ไปยัง `http://prometheus:9090`
-- **Dashboard**: `Spring Boot Metrics (Lab11)` (ไฟล์ `grafana/dashboards/spring-boot-metrics.json`)
+- **Dashboard**: `Spring Boot Metrics (Lab03-01)` (ไฟล์ `grafana/dashboards/spring-boot-metrics.json`)
 
 เนื้อหา dashboard อ้างอิง panel สำคัญจาก Grafana Lab ID 14430 เช่น:
 
@@ -59,4 +59,4 @@ Grafana ถูกตั้งค่า provisioning ไว้ใน `grafana/pro
 - 5xx error percentage indicator
 - CPU usage, Heap utilization gauge, และ live thread count
 
-เปิด Grafana แล้วไปที่ **Dashboards → Spring Boot Metrics (Lab11)** เพื่อสำรวจ metrics ได้ทันที ไม่ต้อง import ด้วยมือ
+เปิด Grafana แล้วไปที่ **Dashboards → Spring Boot Metrics (Lab03-01)** เพื่อสำรวจ metrics ได้ทันที ไม่ต้อง import ด้วยมือ

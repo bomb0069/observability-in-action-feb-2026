@@ -1,8 +1,8 @@
-# Lab 19: eBPF-based Auto-Instrumentation with Beyla
+# Lab05-02: eBPF-based Auto-Instrumentation with Beyla
 
 ## Overview
 
-This lab demonstrates **eBPF-based auto-instrumentation** using Grafana Beyla. Unlike Lab 18 which uses runtime agents (OpenTelemetry Java Agent and Node.js auto-instrumentation), this lab uses **eBPF technology** to instrument applications **without any code changes or runtime agents**. The architecture includes:
+This lab demonstrates **eBPF-based auto-instrumentation** using Grafana Beyla. Unlike Lab05-01 which uses runtime agents (OpenTelemetry Java Agent and Node.js auto-instrumentation), this lab uses **eBPF technology** to instrument applications **without any code changes or runtime agents**. The architecture includes:
 
 - **User Service**: Java/Spring Boot application (no OpenTelemetry agent)
 - **Point Service**: Node.js/Express application (no OpenTelemetry SDK)
@@ -39,9 +39,9 @@ This lab demonstrates **eBPF-based auto-instrumentation** using Grafana Beyla. U
 
 **eBPF (extended Berkeley Packet Filter)** is a technology that allows running sandboxed programs in the Linux kernel without changing kernel source code. Beyla uses eBPF to instrument applications by:
 
-### Key Differences from Lab 18 (Runtime Agents)
+### Key Differences from Lab05-01 (Runtime Agents)
 
-| Aspect                        | Lab 18 (Runtime Agents)                                   | Lab 19 (eBPF/Beyla)                              |
+| Aspect                        | Lab05-01 (Runtime Agents)                                   | Lab05-02 (eBPF/Beyla)                              |
 | ----------------------------- | --------------------------------------------------------- | ------------------------------------------------ |
 | **Instrumentation Level**     | Application runtime (JVM bytecode, Node.js require hooks) | Kernel level (network syscalls, function probes) |
 | **Code Changes**              | None (zero-code)                                          | None (truly zero-code)                           |
@@ -123,7 +123,7 @@ This lab demonstrates **eBPF-based auto-instrumentation** using Grafana Beyla. U
 ### 1. Start Services
 
 ```bash
-cd lab19
+cd 05_instrumentation/02_ebpf_beyla
 docker-compose up -d --build
 ```
 
@@ -213,7 +213,7 @@ Navigate to: http://localhost:3000
 { span.kind = "server" && span.http.method = "GET" }
 ```
 
-**Compare with Lab 18**: Notice that traces are less detailed:
+**Compare with Lab05-01**: Notice that traces are less detailed:
 
 - No internal spans (database queries, internal methods)
 - Only HTTP/network-level spans
@@ -312,7 +312,7 @@ Beyla captures:
 
 ### 3. Trace Correlation
 
-Unlike Lab 18 which uses W3C Trace Context headers for trace propagation, Beyla uses **network-based correlation**:
+Unlike Lab05-01 which uses W3C Trace Context headers for trace propagation, Beyla uses **network-based correlation**:
 
 - Matches outgoing requests with incoming responses
 - Builds distributed traces from network flow
@@ -327,9 +327,9 @@ eBPF instrumentation has minimal performance impact because:
 - No Node.js hook overhead
 - Kernel-level monitoring is highly efficient
 
-## Comparison: Lab 18 vs Lab 19
+## Comparison: Lab05-01 vs Lab05-02
 
-### When to Use Runtime Agents (Lab 18)
+### When to Use Runtime Agents (Lab05-01)
 
 ✅ Need detailed internal visibility (database queries, method calls)  
 ✅ Require log correlation with trace IDs  
@@ -337,7 +337,7 @@ eBPF instrumentation has minimal performance impact because:
 ✅ Need framework-specific metrics (JVM, Node.js runtime)  
 ✅ Have control over application deployment
 
-### When to Use eBPF/Beyla (Lab 19)
+### When to Use eBPF/Beyla (Lab05-02)
 
 ✅ Cannot modify application code or deployment  
 ✅ Need to instrument legacy applications  
@@ -349,13 +349,13 @@ eBPF instrumentation has minimal performance impact because:
 ## Cleanup
 
 ```bash
-cd lab19
+cd 05_instrumentation/02_ebpf_beyla
 docker-compose down -v
 ```
 
 ## Next Steps
 
-- **Lab 20** (future): Hybrid approach - eBPF for network + selective runtime agents
+- **Lab05-03** (future): Hybrid approach - eBPF for network + selective runtime agents
 - Explore Beyla's Kubernetes service discovery
 - Compare trace detail between runtime agents and eBPF
 - Evaluate performance impact differences

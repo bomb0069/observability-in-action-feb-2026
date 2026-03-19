@@ -1,4 +1,4 @@
-# Lab: eBPF Zero-Code Profiling with Grafana Alloy
+# Lab06-03: eBPF Zero-Code Profiling with Grafana Alloy
 
 ## Overview
 

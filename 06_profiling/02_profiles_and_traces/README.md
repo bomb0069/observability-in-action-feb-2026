@@ -1,4 +1,4 @@
-# Lab: Span Profiles — Linking Traces to Profiles
+# Lab06-02: Span Profiles — Linking Traces to Profiles
 
 ## Overview
 

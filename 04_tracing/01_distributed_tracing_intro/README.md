@@ -1,6 +1,6 @@
-# OpenTelemetry Tracing with LGTM Stack (Lab14)
+# OpenTelemetry Tracing with LGTM Stack (Lab04-01)
 
-Lab14 ต่อยอดจาก Lab01 โดยเปลี่ยนจาก **Prometheus + Grafana** เป็น **LGTM Stack (Loki, Grafana, Tempo, Mimir)** เพื่อรับ **distributed tracing** จาก Spring Boot application ผ่าน OpenTelemetry Protocol (OTLP)
+Lab04-01 ต่อยอดจาก Lab01-01 โดยเปลี่ยนจาก **Prometheus + Grafana** เป็น **LGTM Stack (Loki, Grafana, Tempo, Mimir)** เพื่อรับ **distributed tracing** จาก Spring Boot application ผ่าน OpenTelemetry Protocol (OTLP)
 
 ## Stack Components
 
@@ -13,9 +13,9 @@ Lab14 ต่อยอดจาก Lab01 โดยเปลี่ยนจาก 
   - **Mimir** – Metrics storage (Prometheus-compatible)
   - **OTLP Receiver** – Accepts traces, metrics, and logs (ports 4317/4318)
 
-## What's New in Lab14
+## What's New in Lab04-01
 
-### เปลี่ยนจาก Lab01:
+### เปลี่ยนจาก Lab01-01:
 
 - ❌ ลบ standalone Prometheus และ Grafana
 - ✅ เพิ่ม LGTM stack (all-in-one observability)
@@ -68,7 +68,7 @@ docker compose down -v
 
 ### Java Agent Approach (Zero-Code Instrumentation)
 
-Lab14 ใช้ **OpenTelemetry Java Agent** ซึ่งเป็น bytecode instrumentation ที่ทำงานโดยไม่ต้องแก้ code:
+Lab04-01 ใช้ **OpenTelemetry Java Agent** ซึ่งเป็น bytecode instrumentation ที่ทำงานโดยไม่ต้องแก้ code:
 
 ```dockerfile
 # Dockerfile
@@ -310,9 +310,9 @@ docker run --rm -i grafana/k6 run - <scripts/load.js
 - ดูว่า endpoint ไหนช้ากว่า
 - วิเคราะห์สาเหตุ (database, serialization, business logic)
 
-## Differences from Lab01
+## Differences from Lab01-01
 
-| Feature             | Lab01                 | Lab14                      |
+| Feature             | Lab01-01                 | Lab04-01                      |
 | ------------------- | --------------------- | -------------------------- |
 | **Metrics**         | Prometheus standalone | Mimir (in LGTM)            |
 | **Visualization**   | Grafana standalone    | Grafana (in LGTM)          |
@@ -332,11 +332,11 @@ docker run --rm -i grafana/k6 run - <scripts/load.js
 
 ## Next Steps
 
-After Lab14, explore:
+After Lab04-01, explore:
 
-- **Lab15** (coming soon) – Multi-service tracing with service mesh
-- **Lab16** (coming soon) – Custom spans and trace context propagation
-- **Lab17** (coming soon) – Trace-based alerting and SLOs
+- **Lab04-02** (coming soon) – Multi-service tracing with service mesh
+- **Lab04-03** (coming soon) – Custom spans and trace context propagation
+- **Lab04-04** (coming soon) – Trace-based alerting and SLOs
 
 ## Troubleshooting
 
@@ -364,7 +364,7 @@ After Lab14, explore:
 # Rebuild with clean
 doc
 
-**Note**: Lab14 ไม่ได้ใช้ OpenTelemetry dependencies ใน pom.xml แล้ว ใช้ Java Agent แทน ซึ่ง download มาไว้ใน `agent/` folder แล้ว
+**Note**: Lab04-01 ไม่ได้ใช้ OpenTelemetry dependencies ใน pom.xml แล้ว ใช้ Java Agent แทน ซึ่ง download มาไว้ใน `agent/` folder แล้ว
 
 ### Java Agent ไม่ทำงาน
 

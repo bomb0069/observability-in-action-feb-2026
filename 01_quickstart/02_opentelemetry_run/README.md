@@ -1,6 +1,6 @@
-# OpenTelemetry Quick Run (Lab02)
+# OpenTelemetry Quick Run (Lab01-02)
 
-Lab02 เป็น lab สั้น ๆ สำหรับลองรัน OpenTelemetry แบบ end-to-end ก่อนเข้าสู่เนื้อหาเชิงลึก ผู้เรียนจะได้เห็นว่าแอปหลายภาษา (Spring Boot + Go + Node.js) ส่ง telemetry (metrics + traces + logs) ผ่าน OTLP ไปยัง LGTM stack ได้อย่างไร พร้อม Prometheus แยกต่างหากสำหรับดู Micrometer metrics โดยตรง
+Lab01-02 เป็น lab สั้น ๆ สำหรับลองรัน OpenTelemetry แบบ end-to-end ก่อนเข้าสู่เนื้อหาเชิงลึก ผู้เรียนจะได้เห็นว่าแอปหลายภาษา (Spring Boot + Go + Node.js) ส่ง telemetry (metrics + traces + logs) ผ่าน OTLP ไปยัง LGTM stack ได้อย่างไร พร้อม Prometheus แยกต่างหากสำหรับดู Micrometer metrics โดยตรง
 
 ## Stack Components
 
@@ -55,4 +55,4 @@ curl -X POST http://localhost:8001/points \
 docker compose down -v
 ```
 
-> Lab02 มีเป้าหมายเพื่อให้เห็นภาพรวมการส่ง telemetry ผ่าน OTLP อย่างรวดเร็ว รายละเอียดเชิงลึกและการ customize dashboards จะต่อยอดใน labs ถัดไป
+> Lab01-02 มีเป้าหมายเพื่อให้เห็นภาพรวมการส่ง telemetry ผ่าน OTLP อย่างรวดเร็ว รายละเอียดเชิงลึกและการ customize dashboards จะต่อยอดใน labs ถัดไป

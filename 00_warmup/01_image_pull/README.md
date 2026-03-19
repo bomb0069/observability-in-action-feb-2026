@@ -1,4 +1,4 @@
-# Lab00: Image Warm-Up
+# Lab00-01: Image Warm-Up
 
 Use this helper lab to pre-pull every container image that appears in labs 03 through 13. Running a single pull up front keeps the later lab startup times short, especially on slow networks.
 

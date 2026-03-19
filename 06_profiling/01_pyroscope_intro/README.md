@@ -1,4 +1,4 @@
-# Lab: Continuous Profiling with Grafana Pyroscope
+# Lab06-01: Continuous Profiling with Grafana Pyroscope
 
 ## Overview
 

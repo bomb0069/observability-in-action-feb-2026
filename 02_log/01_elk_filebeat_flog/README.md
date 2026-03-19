@@ -1,4 +1,4 @@
-# Lab03 - ELK Stack with Filebeat and Flog
+# Lab02-01 - ELK Stack with Filebeat and Flog
 
 Lab สำหรับทดสอบการเก็บ log จาก application ผ่าน Filebeat, Logstash ไปยัง Elasticsearch และแสดงผลที่ Kibana
 

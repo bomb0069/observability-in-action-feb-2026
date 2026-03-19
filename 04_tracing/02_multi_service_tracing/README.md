@@ -1,4 +1,4 @@
-# Lab 15: Distributed Tracing with LGTM Stack
+# Lab04-02: Distributed Tracing with LGTM Stack
 
 ## Overview
 
@@ -89,7 +89,7 @@ Both services use **zero-code instrumentation**, meaning:
 ### 1. Start Services
 
 ```bash
-cd lab15
+cd 04_tracing/02_multi_service_tracing
 docker-compose up -d --build
 ```
 

@@ -1,4 +1,4 @@
-# Lab08 - Unified Visualizations with ECS Normalization
+# Lab02-06 - Unified Visualizations with ECS Normalization
 
 Lab สำหรับแสดง logs จาก multiple applications (flog และ flog2) ใน **visualizations เดียวกัน** โดยใช้ ECS field normalization และ split series aggregation
 

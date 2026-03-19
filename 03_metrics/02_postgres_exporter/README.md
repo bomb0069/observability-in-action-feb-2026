@@ -1,6 +1,6 @@
-# Database + Application Metrics (Lab12)
+# Database + Application Metrics (Lab03-02)
 
-Lab12 ต่อยอดจาก Lab11 โดยเพิ่ม **Postgres exporter** เพื่อติดตาม database health ควบคู่กับ Spring Boot Micrometer metrics ทำให้ Grafana มองเห็นทั้ง application และ database layer ใน dashboard เดียวกัน
+Lab03-02 ต่อยอดจาก Lab03-01 โดยเพิ่ม **Postgres exporter** เพื่อติดตาม database health ควบคู่กับ Spring Boot Micrometer metrics ทำให้ Grafana มองเห็นทั้ง application และ database layer ใน dashboard เดียวกัน
 
 ## Stack Components
 
@@ -54,7 +54,7 @@ scrape_configs:
 
 Provisioning อยู่ใน `grafana/provisioning` และจะโหลดอัตโนมัติเมื่อ Grafana start:
 
-1. **Spring Boot Metrics (Lab11)** – อ้างอิง Grafana Lab ID 14430 แสดง RPS, latency, error %, heap ฯลฯ (ไฟล์ `spring-boot-metrics.json`).
-2. **Postgres Metrics (Lab12)** – dashboard ใหม่ (ไฟล์ `postgres-metrics.json`) ครอบคลุม exporter status, active connections, TPS, cache hit ratio, DB size และ deadlocks ใน 5 นาทีล่าสุด
+1. **Spring Boot Metrics (Lab03-01)** – อ้างอิง Grafana Lab ID 14430 แสดง RPS, latency, error %, heap ฯลฯ (ไฟล์ `spring-boot-metrics.json`).
+2. **Postgres Metrics (Lab03-02)** – dashboard ใหม่ (ไฟล์ `postgres-metrics.json`) ครอบคลุม exporter status, active connections, TPS, cache hit ratio, DB size และ deadlocks ใน 5 นาทีล่าสุด
 
-เปิด Grafana แล้วไปที่ **Dashboards → Spring Boot Metrics (Lab11)** หรือ **Dashboards → Postgres Metrics (Lab12)** เพื่อเริ่มสำรวจข้อมูล
+เปิด Grafana แล้วไปที่ **Dashboards → Spring Boot Metrics (Lab03-01)** หรือ **Dashboards → Postgres Metrics (Lab03-02)** เพื่อเริ่มสำรวจข้อมูล

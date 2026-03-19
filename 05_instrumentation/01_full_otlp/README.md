@@ -1,8 +1,8 @@
-# Lab 18: Full Observability with LGTM Stack (All OTLP Signals)
+# Lab05-01: Full Observability with LGTM Stack (All OTLP Signals)
 
 ## Overview
 
-This lab demonstrates **Full Observability** with all three telemetry signals (traces, metrics, logs) using the LGTM stack (Loki, Grafana, Tempo, Mimir). Unlike Lab 15 which focused on traces only, this lab enables all OTLP signals. The architecture includes:
+This lab demonstrates **Full Observability** with all three telemetry signals (traces, metrics, logs) using the LGTM stack (Loki, Grafana, Tempo, Mimir). Unlike Lab04-02 which focused on traces only, this lab enables all OTLP signals. The architecture includes:
 
 - **User Service**: Java/Spring Boot application with OpenTelemetry Java Agent (zero-code instrumentation)
 - **Point Service**: Node.js/Express application with OpenTelemetry auto-instrumentation (zero-code instrumentation)
@@ -106,7 +106,7 @@ Both services use **zero-code instrumentation** for all three signals:
 ### 1. Start Services
 
 ```bash
-cd lab18
+cd 05_instrumentation/01_full_otlp
 docker-compose up -d --build
 ```
 
@@ -319,9 +319,9 @@ OTEL_LOGS_EXPORTER: otlp
 "start": "node -r ./tracing.js dist/index.js"
 ```
 
-## Key Differences from Lab 15
+## Key Differences from Lab04-02
 
-| Feature           | Lab 15              | Lab 18                  |
+| Feature           | Lab04-02              | Lab05-01                  |
 | ----------------- | ------------------- | ----------------------- |
 | **Traces**        | ✅ Enabled          | ✅ Enabled              |
 | **Metrics**       | ❌ Not configured   | ✅ Enabled              |

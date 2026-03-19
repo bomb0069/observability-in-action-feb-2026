@@ -1,8 +1,8 @@
-# Lab 15 Setup Summary
+# Lab04-02 Setup Summary
 
 ## What Was Created
 
-Lab 15 extends Lab 14 to demonstrate **distributed tracing across multiple services** using the LGTM stack.
+Lab04-02 extends Lab04-01 to demonstrate **distributed tracing across multiple services** using the LGTM stack.
 
 ### New Components
 
@@ -33,70 +33,70 @@ User Request → User Service (Java/Spring Boot)
 
 ### Modified Files
 
-1. **lab15/user/src/main/java/com/example/user/UserController.java**
+1. **user/src/main/java/com/example/user/UserController.java**
    - Added RestTemplate to call Point Service
    - Modified getUserById endpoint to fetch points from Point Service
    - Returns combined user + points data
 
-2. **lab15/user/src/main/java/com/example/user/RestConfig.java** (NEW)
+2. **user/src/main/java/com/example/user/RestConfig.java** (NEW)
    - RestTemplate bean configuration
    - Automatically instrumented by Java Agent for trace propagation
 
-3. **lab15/user/src/main/resources/application.yaml**
+3. **user/src/main/resources/application.yaml**
    - Added point.service.url configuration
    - Default: http://localhost:8001 (overridden in docker-compose)
 
-4. **lab15/docker-compose.yaml**
+4. **docker-compose.yaml**
    - Added point-service configuration
    - Added point-db (MySQL) configuration
    - Updated user-service to depend on point-service
    - Added POINT_SERVICE_URL environment variable
 
-5. **lab15/scripts/load.js**
+5. **scripts/load.js**
    - Updated load test to call user endpoint (which triggers distributed tracing)
    - Random user IDs (1-5) for varied traffic patterns
 
 ### New Files Created
 
-1. **lab15/point/package.json**
+1. **point/package.json**
    - Express 4.18.2
    - mysql2 3.6.5
    - @opentelemetry/auto-instrumentations-node 0.40.3
    - @opentelemetry/sdk-node 0.45.1
    - TypeScript 5.3.3
 
-2. **lab15/point/tsconfig.json**
+2. **point/tsconfig.json**
    - TypeScript configuration for ES2020
    - Output to dist/ directory
 
-3. **lab15/point/tracing.js**
+3. **point/tracing.js**
    - OpenTelemetry SDK initialization
    - Auto-instrumentation for HTTP, Express, MySQL2
    - OTLP exporter configuration
    - Loaded via -r flag before application starts
 
-4. **lab15/point/src/index.ts**
+4. **point/src/index.ts**
    - Express REST API with 5 endpoints
    - MySQL connection pool management
    - Error handling and graceful shutdown
    - Health check endpoint
 
-5. **lab15/point/Dockerfile**
+5. **point/Dockerfile**
    - Multi-stage build (builder + production)
    - TypeScript compilation in builder stage
    - Production stage with only runtime dependencies
    - Starts with: node -r ./tracing.js dist/index.js
 
-6. **lab15/point/tearup/init.sql**
+6. **point/tearup/init.sql**
    - MySQL schema creation (points table)
    - Seed data (9 records for 5 users)
    - Total points ranging from 100-500
 
-7. **lab15/point/.dockerignore**
+7. **point/.dockerignore**
    - Standard Node.js ignore patterns
    - Excludes node_modules, dist, .env files
 
-8. **lab15/README.md**
+8. **README.md**
    - Comprehensive lab documentation
    - Architecture diagrams
    - Setup instructions
@@ -183,7 +183,7 @@ Auto-instrumentation package instruments:
 ### Start Services
 
 ```bash
-cd lab15
+cd 04_tracing/02_multi_service_tracing
 docker compose up -d --build
 ```
 

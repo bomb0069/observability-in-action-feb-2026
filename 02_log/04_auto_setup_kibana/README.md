@@ -1,4 +1,4 @@
-# Lab06 - Auto-Setup Kibana Index Patterns for Multi-Application Logs
+# Lab02-04 - Auto-Setup Kibana Index Patterns for Multi-Application Logs
 
 Lab สำหรับทดสอบการเก็บ logs จาก multiple applications ที่มี format ต่างกัน พร้อม **automatic Kibana index pattern creation** เมื่อรัน docker-compose
 

@@ -1,4 +1,4 @@
-# Lab05 - Multi-Application Log Collection and Visualization
+# Lab02-03 - Multi-Application Log Collection and Visualization
 
 Lab สำหรับทดสอบการเก็บ logs จาก multiple applications ที่มี format ต่างกัน และแสดงผลรวมกันบน Kibana
 

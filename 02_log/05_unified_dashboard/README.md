@@ -1,4 +1,4 @@
-# Lab07 - Unified Dashboard for Multi-Application Logs
+# Lab02-05 - Unified Dashboard for Multi-Application Logs
 
 Lab สำหรับแสดง logs จาก multiple applications (flog และ flog2) ใน **dashboard เดียวกัน** พร้อม automatic setup และ comparison visualizations
 

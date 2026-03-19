@@ -1,4 +1,4 @@
-# Lab 16: Head-Based Sampling for Distributed Tracing
+# Lab04-03: Head-Based Sampling for Distributed Tracing
 
 ## Overview
 
@@ -44,9 +44,9 @@ The architecture includes:
   - Activity rewards (purchase, referral, survey, daily login)
 
 - **Load Test Configuration**:
-  - 50 virtual users (increased from 10 in Lab 15)
+  - 50 virtual users (increased from 10 in Lab04-02)
   - 3-minute duration
-  - Random user IDs (1-20, increased from 1-5 in Lab 15)
+  - Random user IDs (1-20, increased from 1-5 in Lab04-02)
 
 ## What is Distributed Tracing?
 
@@ -126,7 +126,7 @@ This means:
 ### 1. Start Services
 
 ```bash
-cd lab16
+cd 04_tracing/03_multi_service_expanded
 docker-compose up -d --build
 ```
 
@@ -350,9 +350,9 @@ OTEL_TRACES_SAMPLER_ARG: "0.1"
 - ❌ Low-traffic applications (<1000 requests/day)
 - ❌ Compliance/audit requirements
 
-## Comparison: Lab 15 vs Lab 16
+## Comparison: Lab04-02 vs Lab04-03
 
-| Aspect               | Lab 15 (100%)     | Lab 16 (10%)        |
+| Aspect               | Lab04-02 (100%)     | Lab04-03 (10%)        |
 | -------------------- | ----------------- | ------------------- |
 | **Sampling**         | Always on         | traceidratio (0.1)  |
 | **Traces Collected** | All requests      | 1 in 10 requests    |

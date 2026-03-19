@@ -1,4 +1,4 @@
-# Lab10 - Unified Multi-Application Logs with LGTM Stack
+# Lab02-08 - Unified Multi-Application Logs with LGTM Stack
 
 Lab สำหรับรวม logs จาก multiple applications (Apache และ JSON format) และแสดงใน **visualizations เดียวกัน** บน Grafana โดยใช้ LGTM Stack พร้อม split series aggregation
 
@@ -408,9 +408,9 @@ rate({app="flog2"} [1m])
 sum by (app) (rate({environment="lab"} [1m]))
 ```
 
-## Comparison: Lab10 vs Lab09
+## Comparison: Lab02-08 vs Lab02-07
 
-| Feature          | Lab09          | Lab10                         |
+| Feature          | Lab02-07       | Lab02-08                      |
 | ---------------- | -------------- | ----------------------------- |
 | Applications     | 1 (flog)       | 2 (flog + flog2)              |
 | Log Formats      | Apache only    | Apache + JSON                 |
@@ -420,9 +420,9 @@ sum by (app) (rate({environment="lab"} [1m]))
 | Labels           | app="flog"     | app="flog" or "flog2"         |
 | Query Complexity | Simple         | Aggregation by app            |
 
-## Comparison: Lab10 vs Lab08 (ELK)
+## Comparison: Lab02-08 vs Lab02-06 (ELK)
 
-| Feature             | Lab08 (ELK)                     | Lab10 (LGTM)             |
+| Feature             | Lab02-06 (ELK)                  | Lab02-08 (LGTM)          |
 | ------------------- | ------------------------------- | ------------------------ |
 | Stack               | Elasticsearch, Logstash, Kibana | Loki, Grafana, Promtail  |
 | Log Collection      | Filebeat                        | Promtail                 |
@@ -542,7 +542,7 @@ rm -rf logs/
 
 After completing this lab, you can:
 
-1. **Compare with Lab08** (ELK Stack):
+1. **Compare with Lab02-06** (ELK Stack):
    - Resource usage: `docker stats`
    - Query performance
    - Storage requirements

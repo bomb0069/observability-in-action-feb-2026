@@ -1,4 +1,4 @@
-# Lab 20: Log-Derived Metrics & Function Execution Timing
+# Lab05-03: Log-Derived Metrics & Function Execution Timing
 
 ## แนวคิด (Concept)
 
@@ -43,7 +43,7 @@ Lab นี้สาธิตการ **สร้าง Metrics จาก Logs**
 ## Quick Start
 
 ```bash
-cd lab20
+cd 05_instrumentation/03_log_derived_metrics
 
 # Start all services
 docker-compose up -d

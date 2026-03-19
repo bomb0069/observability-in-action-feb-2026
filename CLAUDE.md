@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Observability workshop lab series (24 labs: lab00–lab20 + 3 profiling labs) teaching ELK Stack and LGTM Stack concepts progressively. Written primarily in Thai with English technical terms. Each lab is a self-contained Docker Compose environment. Labs are organized in a 2-layer grouped directory structure: `XX_group/YY_description/`.
+Observability workshop lab series (24 labs: Lab00-01–Lab06-03) teaching ELK Stack and LGTM Stack concepts progressively. Written primarily in Thai with English technical terms. Each lab is a self-contained Docker Compose environment. Labs are organized in a 2-layer grouped directory structure: `XX_group/YY_description/`, with lab IDs using `LabGG-NN` format matching the directory structure.
 
 ## Common Commands
 

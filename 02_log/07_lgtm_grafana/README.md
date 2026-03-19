@@ -1,4 +1,4 @@
-# Lab09 - Grafana Visualizations for Apache Combined Logs with LGTM Stack
+# Lab02-07 - Grafana Visualizations for Apache Combined Logs with LGTM Stack
 
 Lab สำหรับสร้าง visualizations และ dashboards บน Grafana เพื่อวิเคราะห์ Apache combined format logs โดยใช้ LGTM Stack (Loki, Grafana, Tempo, Mimir)
 
@@ -412,7 +412,7 @@ rm -rf logs/
 
 After completing this lab, you can:
 
-1. **Compare with Lab04** (ELK Stack):
+1. **Compare with Lab02-02** (ELK Stack):
    - Resource usage: `docker stats`
    - Query performance
    - Storage requirements

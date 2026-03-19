@@ -220,12 +220,12 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": ["logs", "metrics", "loki", "lab20"],
+  "tags": ["logs", "metrics", "loki", "lab05-03"],
   "templating": { "list": [] },
   "time": { "from": "now-15m", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
   "title": "Log-Derived Metrics",
-  "uid": "lab20-log-metrics",
+  "uid": "lab05-03-log-metrics",
   "version": 1
 }

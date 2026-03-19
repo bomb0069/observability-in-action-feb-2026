@@ -1,4 +1,4 @@
-# Lab04 - Kibana Visualizations for Apache Combined Logs
+# Lab02-02 - Kibana Visualizations for Apache Combined Logs
 
 Lab สำหรับสร้าง visualizations และ dashboards บน Kibana เพื่อวิเคราะห์ Apache combined format logs
 

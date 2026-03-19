@@ -1,8 +1,8 @@
-# Lab 17: Tail-Based Sampling for Distributed Tracing
+# Lab04-04: Tail-Based Sampling for Distributed Tracing
 
 ## Overview
 
-This lab demonstrates **Tail-Based Sampling** using OpenTelemetry Collector. Unlike head-based sampling (Lab 16) which makes sampling decisions at trace start, tail-based sampling waits for the trace to complete before deciding whether to keep it. This enables smart sampling policies like **always keeping error traces** while sampling successful traces.
+This lab demonstrates **Tail-Based Sampling** using OpenTelemetry Collector. Unlike head-based sampling (Lab04-03) which makes sampling decisions at trace start, tail-based sampling waits for the trace to complete before deciding whether to keep it. This enables smart sampling policies like **always keeping error traces** while sampling successful traces.
 
 The architecture includes:
 
@@ -54,7 +54,7 @@ The architecture includes:
   - Activity rewards (purchase, referral, survey, daily login)
 
 - **Load Test Configuration**:
-  - 50 virtual users (same as Lab 16)
+  - 50 virtual users (same as Lab04-03)
   - 3-minute duration
   - Random user IDs (1-20)
   - Error simulation: User Service 5% (1/20), Point Service 20% (1/5)
@@ -65,7 +65,7 @@ The architecture includes:
 
 ### Head-Based vs Tail-Based Sampling
 
-| Aspect                      | Head-Based (Lab 16) | Tail-Based (Lab 17)     |
+| Aspect                      | Head-Based (Lab04-03) | Tail-Based (Lab04-04)     |
 | --------------------------- | ------------------- | ----------------------- |
 | **Decision Point**          | At trace start      | After trace completes   |
 | **Can sample by error?**    | ❌ No               | ✅ Yes                  |
@@ -74,7 +74,7 @@ The architecture includes:
 | **Memory usage**            | Low                 | Higher (buffers traces) |
 | **Best for**                | Simple sampling     | Smart policies          |
 
-### Tail-Based Sampling Policies (Lab 17)
+### Tail-Based Sampling Policies (Lab04-04)
 
 This lab uses three policies in the OpenTelemetry Collector:
 
@@ -96,7 +96,7 @@ For 1000 requests with ~5-20% error rate:
 
 - **All error traces**: ~100-200 traces (100% of errors)
 - **Sample of success**: ~80-90 traces (10% of success)
-- **Total**: ~180-290 traces vs 100 traces in Lab 16
+- **Total**: ~180-290 traces vs 100 traces in Lab04-03
 
 **Key advantage**: You never miss error traces!
 
@@ -221,7 +221,7 @@ This means:
 ### 1. Start Services
 
 ```bash
-cd lab17
+cd 04_tracing/04_trace_sampling
 docker-compose up -d --build
 ```
 
@@ -274,7 +274,7 @@ The load test will:
 
 ### 5. Observe Tail-Based Sampling
 
-**Key difference from Lab 16**: All error traces will be visible!
+**Key difference from Lab04-03**: All error traces will be visible!
 
 ```bash
 # Make some requests and observe errors
@@ -425,10 +425,10 @@ Trace context is still propagated using W3C Trace Context:
 docker-compose logs point-service | grep traceparent
 ```
 
-Key difference from Lab 16:
+Key difference from Lab04-03:
 
-- **Lab 16 (head-based)**: Sampling decision in traceparent header
-- **Lab 17 (tail-based)**: All traces sent, collector decides later
+- **Lab04-03 (head-based)**: Sampling decision in traceparent header
+- **Lab04-04 (tail-based)**: All traces sent, collector decides later
 
 ## Configuration Details
 
@@ -514,7 +514,7 @@ exporters:
 - ✅ Debugging unknown issues
 - ✅ Have infrastructure for collector
 
-### When to Use Head-Based Sampling (Lab 16)
+### When to Use Head-Based Sampling (Lab04-03)
 
 - ✅ Simpler setup (no collector needed)
 - ✅ Lower resource usage
@@ -522,9 +522,9 @@ exporters:
 - ✅ Can afford to miss some errors
 - ✅ Development/staging environments
 
-## Comparison: Lab 16 vs Lab 17
+## Comparison: Lab04-03 vs Lab04-04
 
-| Aspect                 | Lab 16 (Head-Based) | Lab 17 (Tail-Based)        |
+| Aspect                 | Lab04-03 (Head-Based) | Lab04-04 (Tail-Based)        |
 | ---------------------- | ------------------- | -------------------------- |
 | **Sampling Location**  | At trace start      | After trace completes      |
 | **Error Capture**      | ~10% of errors      | 100% of errors             |
@@ -537,14 +537,14 @@ exporters:
 
 ### Example Numbers (1000 requests, 15% error rate)
 
-**Lab 16 (Head-Based)**:
+**Lab04-03 (Head-Based)**:
 
 - All requests sampled at 10%
 - Error traces: ~15 (10% of 150 errors) ❌ **Miss 135 errors!**
 - Success traces: ~85 (10% of 850 success)
 - Total: ~100 traces
 
-**Lab 17 (Tail-Based)**:
+**Lab04-04 (Tail-Based)**:
 
 - Errors sampled at 100%, success at 10%
 - Error traces: ~150 (100% of 150 errors) ✅ **Never miss errors!**
@@ -756,7 +756,7 @@ You can add more sophisticated policies to `otel-collector-config.yaml`:
 - Add custom policies for slow requests
 - Implement rate limiting policies
 - Monitor collector performance and memory
-- Compare storage costs: Lab 16 vs Lab 17
+- Compare storage costs: Lab04-03 vs Lab04-04
 
 ## References
 
