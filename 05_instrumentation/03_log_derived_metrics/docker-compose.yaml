@@ -3,7 +3,7 @@ services:
     build:
       context: ./user
       dockerfile: Dockerfile
-    image: bomb0069/observability-user-service:lab20-1.0.0
+    image: bomb0069/observability-user-service:lab-05-03
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
       SPRING_DATASOURCE_USERNAME: postgres
@@ -55,7 +55,7 @@ services:
     build:
       context: ./point
       dockerfile: Dockerfile
-    image: bomb0069/observability-point-service:lab20-1.0.0
+    image: bomb0069/observability-point-service:lab-05-03
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -82,7 +82,7 @@ services:
     build:
       context: ./store
       dockerfile: Dockerfile
-    image: bomb0069/observability-store-service:lab20-1.0.0
+    image: bomb0069/observability-store-service:lab-05-03
     environment:
       DB_CONNECTION: user:password@(db:3306)/store
       SERVICE_NAME: store-service

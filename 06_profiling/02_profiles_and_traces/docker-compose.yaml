@@ -3,7 +3,7 @@ services:
     build:
       context: ./user
       dockerfile: Dockerfile
-    image: bomb0069/observability-user-service:pyroscope-otel-1.0.0
+    image: bomb0069/observability-user-service:lab-06-02
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
       SPRING_DATASOURCE_USERNAME: postgres
@@ -48,7 +48,7 @@ services:
       retries: 60
 
   store-service:
-    image: bomb0069/observability-store-service:pyroscope-otel-0.0.1
+    image: bomb0069/observability-store-service:lab-06-02
     container_name: store-service
     build:
       context: store
@@ -69,7 +69,7 @@ services:
     restart: always
 
   point-service:
-    image: bomb0069/observability-point-service:pyroscope-otel-0.0.1
+    image: bomb0069/observability-point-service:lab-06-02
     container_name: point-service
     build:
       context: point

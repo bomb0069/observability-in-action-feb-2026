@@ -3,7 +3,7 @@ services:
     build:
       context: ./user
       dockerfile: Dockerfile
-    image: bomb0069/observability-user-service:pyroscope-1.0.0
+    image: bomb0069/observability-user-service:lab-06-01
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user
       SPRING_DATASOURCE_USERNAME: postgres
@@ -45,7 +45,7 @@ services:
     build:
       context: ./store
       dockerfile: Dockerfile
-    image: bomb0069/observability-store-service:pyroscope-0.0.1
+    image: bomb0069/observability-store-service:lab-06-01
     container_name: store-service
     ports:
       - "8000:8000"
@@ -64,7 +64,7 @@ services:
     build:
       context: ./point
       dockerfile: Dockerfile
-    image: bomb0069/observability-point-service:pyroscope-0.0.1
+    image: bomb0069/observability-point-service:lab-06-01
     container_name: point-service
     ports:
       - "8001:8001"
