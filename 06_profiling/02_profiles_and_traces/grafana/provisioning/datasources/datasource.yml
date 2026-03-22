@@ -4,6 +4,36 @@ datasources:
   - name: Pyroscope
     type: grafana-pyroscope-datasource
     uid: pyroscope
-    url: http://pyroscope:4040
+    url: http://127.0.0.1:4040
     access: proxy
     isDefault: false
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    url: http://127.0.0.1:3200
+    access: proxy
+    isDefault: false
+    jsonData:
+      lokiSearch:
+        datasourceUid: loki
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      serviceMap:
+        datasourceUid: prometheus
+      tracesToLogsV2:
+        customQuery: true
+        datasourceUid: loki
+        query: "{${__tags}} | trace_id = \"${__trace.traceId}\""
+        tags:
+          - key: service.name
+            value: service_name
+      tracesToProfiles:
+        datasourceUid: pyroscope
+        profileTypeId: "process_cpu:cpu:nanoseconds:cpu:nanoseconds"
+        customQuery: false
+        tags:
+          - key: service.name
+            value: service_name

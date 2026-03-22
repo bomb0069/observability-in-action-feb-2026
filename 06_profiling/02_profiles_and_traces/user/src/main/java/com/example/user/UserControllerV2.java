@@ -5,22 +5,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+
+/**
+ * V2 API — same logic as V1 but with manual @WithSpan instrumentation
+ * to demonstrate the difference between:
+ *   - V1: zero-code (auto) instrumentation — CPU methods invisible in trace
+ *   - V2: code instrumentation with @WithSpan — CPU methods visible as spans
+ */
 @RestController
-@RequestMapping("/api/v1/users")
-public class UserController {
+@RequestMapping("/api/v2/users")
+public class UserControllerV2 {
     @Autowired
     private UserService userService;
 
@@ -31,14 +36,12 @@ public class UserController {
     private String pointServiceUrl;
 
     private final Random random;
+    private final Logger logger;
 
-    private Logger logger;
-
-    public UserController(UserService userService) {
+    public UserControllerV2(UserService userService) {
         this.userService = userService;
-        random = new Random(0);
-
-        this.logger = LoggerFactory.getLogger(UserController.class);
+        this.random = new Random(0);
+        this.logger = LoggerFactory.getLogger(UserControllerV2.class);
     }
 
     @GetMapping("/{id}")
@@ -53,21 +56,21 @@ public class UserController {
 
         User user = userService.getUserById(id);
 
-        // Simulate CPU-intensive work: calculate user's loyalty tier
+        // CPU-intensive work — now with @WithSpan so it appears in trace
         String loyaltyTier = calculateLoyaltyTier(id);
 
         // Call point-service to get user's points
         Object pointData = null;
         try {
-            String pointUrl = pointServiceUrl + "/api/v1/point";
+            String pointUrl = pointServiceUrl + "/api/v2/point";
             pointData = restTemplate.getForObject(pointUrl, List.class);
             logger.info("Got points data for user {}", id);
         } catch (Exception e) {
             logger.warn("Failed to fetch points for user {}: {}", id, e.getMessage());
         }
 
-        // Simulate CPU-intensive work: build recommendation score
-        double recommendationScore = buildRecommendationScore(user, id);
+        // CPU-intensive work — now with @WithSpan so it appears in trace
+        double recommendationScore = buildRecommendationScore(id);
 
         Map<String, Object> result = new HashMap<>();
         result.put("user", user);
@@ -78,10 +81,11 @@ public class UserController {
     }
 
     /**
-     * Simulate CPU-intensive loyalty tier calculation
-     * using repeated hashing — visible in flame graph
+     * @WithSpan creates a child span named "UserControllerV2.calculateLoyaltyTier"
+     * visible in the trace timeline — compare with V1 where this is invisible
      */
-    private String calculateLoyaltyTier(Long userId) {
+    @WithSpan
+    private String calculateLoyaltyTier(@SpanAttribute("userId") Long userId) {
         long hash = userId;
         for (int i = 0; i < 30_000_000; i++) {
             hash = hash * 31 + i;
@@ -92,10 +96,11 @@ public class UserController {
     }
 
     /**
-     * Simulate CPU-intensive recommendation scoring
-     * using matrix-like computation — visible in flame graph
+     * @WithSpan creates a child span named "UserControllerV2.buildRecommendationScore"
+     * visible in the trace timeline — compare with V1 where this is invisible
      */
-    private double buildRecommendationScore(User user, Long userId) {
+    @WithSpan
+    private double buildRecommendationScore(@SpanAttribute("userId") Long userId) {
         double score = 0.0;
         for (int i = 0; i < 5_000_000; i++) {
             score += Math.sin(i * 0.001 + userId) * Math.cos(i * 0.002);

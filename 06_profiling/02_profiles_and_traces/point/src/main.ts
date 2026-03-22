@@ -1,19 +1,13 @@
-import Pyroscope from '@pyroscope/nodejs';
-
-Pyroscope.init({
-  serverAddress: process.env.PYROSCOPE_SERVER_ADDRESS || 'http://pyroscope:4040',
-  appName: 'point-service',
-});
-Pyroscope.start();
+// OTel SDK must start before NestJS modules are imported
+// so instrumentations can hook into http/nest/typeorm
+import './trace';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { otelSDK } from './trace';
 
 async function bootstrap() {
-  await otelSDK.start();
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api');
   await app.listen(8001);
 }
 bootstrap();

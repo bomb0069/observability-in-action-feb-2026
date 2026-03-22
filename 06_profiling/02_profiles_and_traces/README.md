@@ -110,6 +110,41 @@ docker run --rm -i grafana/k6 run - <scripts/load.js
 | 8001 | point-service |
 | 9090 | Prometheus |
 
+## Clock Skew ใน Distributed Tracing
+
+เมื่อดู trace ที่มีการเรียกข้าม service (เช่น user-service → point-service) อาจสังเกตเห็นว่า **span ของ child service เริ่มต้นหรือสิ้นสุดไม่ตรงกับ span ของ parent service** เช่น span ของ point-service ยาวเกินขอบ GET span ของ user-service
+
+### ตัวอย่าง
+
+**Trace ที่ 1** — point-service spans (สีเขียว) ยื่นออกมาเล็กน้อยเกินขอบ GET span ของ user-service:
+
+![Clock Skew Example 1](docs/clock-skew-trace-01.png)
+
+**Trace ที่ 2** — เห็นชัดเจนกว่า point-service spans เริ่มและจบไม่ตรงกับ GET span ของ user-service:
+
+![Clock Skew Example 2](docs/clock-skew-trace-02.png)
+
+### สาเหตุ — ไม่ใช่ปัญหา Docker time sync
+
+ทุก container ใน Docker Compose บน macOS ใช้ **kernel clock เดียวกัน** ผ่าน Docker VM ดังนั้นนาฬิการะบบตรงกัน
+
+สาเหตุที่แท้จริงคือ **clock skew ระหว่าง OTel SDK/agent ของแต่ละภาษา**:
+
+| Service | ภาษา | วิธีจับ timestamp |
+|---------|------|------------------|
+| user-service | Java (OTel agent) | `System.nanoTime()` (monotonic) mapped to wall clock |
+| point-service | Node.js (OTel SDK) | `performance.now()` หรือ `Date.now()` |
+
+ความคลาดเคลื่อน (~1-2ms) เกิดจาก:
+
+1. **ความแตกต่างของ timestamp precision** ระหว่าง Java และ Node.js OTel implementation
+2. **Network latency** — HTTP client span ของ user-service จบเมื่อได้รับ response แต่ point-service อาจบันทึก span end หลังจากส่ง response ไปแล้วเล็กน้อย
+3. **Span reporting granularity** — spans ถูก batch และ timestamps อาจมี drift ระดับ microsecond ระหว่าง runtime ที่ต่างกัน
+
+### สรุป
+
+นี่คือ **พฤติกรรมปกติ** ของ distributed tracing ไม่ใช่ bug แม้แต่ในระบบ production ที่ใช้ NTP sync ก็ยังเห็น child span ที่ดูเหมือนเริ่มก่อนหรือจบหลัง parent span ได้ Grafana/Tempo แสดงความสัมพันธ์ parent-child ได้ถูกต้องผ่าน **trace context propagation** (`traceparent` header) ไม่ได้ใช้ timestamp ในการจับคู่
+
 ## Stop
 
 ```bash

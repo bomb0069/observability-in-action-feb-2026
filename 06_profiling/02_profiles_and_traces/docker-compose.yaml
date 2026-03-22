@@ -12,11 +12,12 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_RESOURCE_ATTRIBUTES: service.name=user-service
+      OTEL_JAVAAGENT_EXTENSIONS: ./pyroscope-otel.jar
       PYROSCOPE_APPLICATION_NAME: user-service
-      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_SERVER_ADDRESS: http://lgtm:4040
       PYROSCOPE_FORMAT: jfr
     ports:
-      - 8080:8080
+      - 8180:8080
     depends_on:
       lgtm:
         condition: service_started
@@ -35,7 +36,7 @@ services:
     volumes:
       - ./user/tearup/init.sql:/docker-entrypoint-initdb.d/user.sql
     ports:
-      - "5432:5432"
+      - "5532:5432"
     restart: always
     healthcheck:
       test:
@@ -49,18 +50,18 @@ services:
 
   store-service:
     image: bomb0069/observability-store-service:lab-06-02
-    container_name: store-service
+    container_name: lab0602-store-service
     build:
       context: store
     ports:
-      - "8000:8000"
+      - "8100:8000"
     environment:
       DB_CONNECTION: user:password@(db:3306)/store
       SERVICE_NAME: store-service
       INSECURE_MODE: true
       OTEL_EXPORTER_OTLP_ENDPOINT: lgtm:4317
       PYROSCOPE_APPLICATION_NAME: store-service
-      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_SERVER_ADDRESS: http://lgtm:4040
     depends_on:
       db:
         condition: service_healthy
@@ -70,11 +71,11 @@ services:
 
   point-service:
     image: bomb0069/observability-point-service:lab-06-02
-    container_name: point-service
+    container_name: lab0602-point-service
     build:
       context: point
     ports:
-      - "8001:8001"
+      - "8101:8001"
     depends_on:
       db:
         condition: service_healthy
@@ -85,12 +86,13 @@ services:
       DB_PORT: 3306
       DB_USERNAME: user
       DB_PASSWORD: password
-      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      OTEL_SERVICE_NAME: point-service
+      OTEL_RESOURCE_ATTRIBUTES: service.name=point-service
     restart: always
 
   db:
     image: mysql:8.3.0
-    container_name: db
+    container_name: lab0602-db
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=user
@@ -100,7 +102,7 @@ services:
       - ./store/tearup/grantall.sql:/docker-entrypoint-initdb.d/grantall.sql
       - ./point/tearup/init.sql:/docker-entrypoint-initdb.d/point.sql
     ports:
-      - "3306:3306"
+      - "3406:3306"
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -112,24 +114,24 @@ services:
   pyroscope:
     image: grafana/pyroscope:latest
     ports:
-      - "4040:4040"
+      - "4140:4040"
     restart: always
 
   lgtm:
     image: grafana/otel-lgtm:latest
     ports:
-      - "4317:4317"
-      - "4318:4318"
-      - "3000:3000"
+      - "4417:4317"
+      - "4418:4318"
+      - "3100:3000"
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
     restart: always
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
+    container_name: lab0602-prometheus
     ports:
-      - 9090:9090
+      - 9190:9090
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:

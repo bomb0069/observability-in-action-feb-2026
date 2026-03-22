@@ -14,7 +14,7 @@ RUN ./mvnw install -DskipTests
 FROM eclipse-temurin:21-jre
 
 COPY agent/opentelemetry-javaagent.jar opentelemetry-javaagent.jar
-COPY agent/pyroscope.jar pyroscope.jar
+COPY agent/pyroscope-otel.jar pyroscope-otel.jar
 COPY --from=build /home/app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent.jar", "-javaagent:pyroscope.jar", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent.jar", "-jar", "app.jar"]

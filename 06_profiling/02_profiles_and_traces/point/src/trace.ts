@@ -1,4 +1,4 @@
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import * as process from 'process';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
@@ -8,15 +8,15 @@ import { TypeormInstrumentation } from 'opentelemetry-instrumentation-typeorm';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 
 const collectorOptions = {
-  url: 'http://lgtm:4317', // url is optional and can be omitted - default is http://localhost:4318/v1/traces
-  headers: {}, // an optional object containing custom headers to be sent with each request
-  concurrencyLimit: 10, // an optional limit on pending requests
+  url: 'http://lgtm:4317',
+  headers: {},
+  concurrencyLimit: 10,
 };
 
 const exporter = new OTLPTraceExporter(collectorOptions);
 
 export const otelSDK = new NodeSDK({
-  spanProcessor: new SimpleSpanProcessor(exporter) as any,
+  spanProcessor: new BatchSpanProcessor(exporter) as any,
 
   instrumentations: [
     new HttpInstrumentation(),
@@ -25,6 +25,11 @@ export const otelSDK = new NodeSDK({
   ],
   serviceName: 'point-service',
 });
+
+// Start SDK immediately at import time so instrumentations register
+// BEFORE NestJS modules are imported in main.ts
+otelSDK.start();
+console.log('OpenTelemetry SDK started for point-service');
 
 // gracefully shut down the SDK on process exit
 process.on('SIGTERM', () => {
