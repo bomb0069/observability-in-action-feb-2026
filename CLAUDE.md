@@ -81,3 +81,7 @@ Each service has `tearup/init.sql` for DB schema initialization mounted into `/d
 
 - **04_tracing/*, 05_instrumentation/01_full_otlp**: Java agent (`user/agent/opentelemetry-javaagent.jar`), Node.js SDK packages
 - **05_instrumentation/02_ebpf_beyla**: Beyla eBPF-based (kernel-level, no agents needed in application code)
+
+## Implementation Roadmap
+
+See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for the next features to implement (groups 07–10: alerting, SLO, correlation, dashboards).
