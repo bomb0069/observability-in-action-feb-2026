@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability Schema — Reference Document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── THEME ── */
+[data-theme="light"]{
+  --bg:      #F7F8FC;
+  --surface: #FFFFFF;
+  --surface2:#F0F2FA;
+  --border:  #E2E6F0;
+  --text:    #1C1E2E;
+  --text2:   #545878;
+  --text3:   #909ABB;
+  --blue:    #1565C0;
+  --blueL:   #1976D2;
+  --orange:  #E8920A;
+  --navy:    #0C1A6A;
+  --codebg:  #161B2E;
+  --codefg:  #CDD6F4;
+  --sb-act:  #E8EDFF;
+  --sb-atx:  #1565C0;
+  --pill-b:  #DBEAFE; --pill-bt: #1E3A8A;
+  --pill-g:  #DCFCE7; --pill-gt: #14532D;
+  --pill-p:  #EDE9FE; --pill-pt: #4C1D95;
+  --pill-o:  #FEF3C7; --pill-ot: #78350F;
+  --pill-r:  #FEE2E2; --pill-rt: #7F1D1D;
+  --ok-bg:   #F0FDF4; --ok-bd:  #16A34A; --ok-tx: #14532D;
+  --no-bg:   #FFF1F2; --no-bd:  #E11D48; --no-tx: #881337;
+  --info-bg: #EFF6FF; --info-bd:#2563EB; --info-tx:#1E3A8A;
+  --warn-bg: #FFFBEB; --warn-bd:#D97706; --warn-tx:#78350F;
+  --tgl-bg:  #E2E6F0; --tgl-ic: #545878;
+  --scrollbar: rgba(0,0,0,.12);
+}
+[data-theme="dark"]{
+  --bg:      #0D1117;
+  --surface: #161B26;
+  --surface2:#1C2235;
+  --border:  #2A3050;
+  --text:    #E8EBF8;
+  --text2:   #8892BB;
+  --text3:   #4D5A80;
+  --blue:    #5B9CF6;
+  --blueL:   #4A90E2;
+  --orange:  #F5A623;
+  --navy:    #1A2D8A;
+  --codebg:  #0A0D18;
+  --codefg:  #CDD6F4;
+  --sb-act:  #1C2A5A;
+  --sb-atx:  #7EB4FF;
+  --pill-b:  #1E2D5A; --pill-bt: #93C5FD;
+  --pill-g:  #0D2B1C; --pill-gt: #6EE7A4;
+  --pill-p:  #271848; --pill-pt: #C4B5FD;
+  --pill-o:  #2A1D06; --pill-ot: #FCD34D;
+  --pill-r:  #2A0E12; --pill-rt: #FCA5A5;
+  --ok-bg:   #0D2015; --ok-bd:  #16A34A; --ok-tx: #6EE7A4;
+  --no-bg:   #200912; --no-bd:  #E11D48; --no-tx: #FCA5A5;
+  --info-bg: #0D1A30; --info-bd:#2563EB; --info-tx:#93C5FD;
+  --warn-bg: #1E1206; --warn-bd:#D97706; --warn-tx:#FCD34D;
+  --tgl-bg:  #2A3050; --tgl-ic: #8892BB;
+  --scrollbar: rgba(255,255,255,.1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{display:flex;min-height:100vh;font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;transition:background .25s,color .25s}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:3px}
+
+/* ── SIDEBAR ── */
+#sidebar{width:248px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;transition:background .25s,border-color .25s}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid var(--border)}
+.sb-brand{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--orange);margin-bottom:4px}
+.sb-title{font-size:15px;font-weight:800;color:var(--text);line-height:1.3}
+.sb-ver{font-size:11px;color:var(--text3);margin-top:3px}
+
+.sb-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.sb-sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:10px 10px 5px}
+.sb-link{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:7px;text-decoration:none;font-size:13px;color:var(--text2);font-weight:500;transition:background .15s,color .15s;cursor:pointer}
+.sb-link:hover{background:var(--surface2);color:var(--text)}
+.sb-link.active{background:var(--sb-act);color:var(--sb-atx);font-weight:700}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-m{background:#1D9E75}
+.dot-t{background:#7E57C2}
+.dot-l{background:var(--orange)}
+.dot-c{background:var(--blueL)}
+.dot-s{background:#E53935}
+
+.sb-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.theme-toggle{display:flex;align-items:center;justify-content:space-between;width:100%}
+.tgl-label{font-size:12px;color:var(--text2);font-weight:500}
+.tgl-track{position:relative;width:42px;height:24px;background:var(--tgl-bg);border-radius:12px;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.tgl-track.on{background:var(--navy)}
+.tgl-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .2s;pointer-events:none}
+.tgl-track.on .tgl-thumb{transform:translateX(18px)}
+.tgl-track svg{position:absolute;top:4px;width:16px;height:16px;stroke:var(--tgl-ic);fill:none;stroke-width:1.8;stroke-linecap:round;transition:opacity .2s}
+.tgl-track .sun{left:4px;opacity:1}
+.tgl-track .moon{right:4px;opacity:0}
+.tgl-track.on .sun{opacity:0}
+.tgl-track.on .moon{opacity:1;stroke:rgba(255,255,255,.7)}
+
+/* ── MAIN ── */
+#main{flex:1;overflow-y:auto;padding:0}
+
+/* Hero */
+.hero{padding:52px 60px 40px;background:var(--surface);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:-40px;top:-40px;opacity:.04;pointer-events:none}
+.hero-eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--orange);margin-bottom:12px}
+.hero-h1{font-size:clamp(34px,4vw,56px);font-weight:800;line-height:1.1;margin-bottom:14px}
+.hero-h1 .o{color:var(--orange)}
+.hero-h1 .b{color:var(--blue)}
+.hero-sub{font-size:16px;color:var(--text2);max-width:600px;line-height:1.6;margin-bottom:20px}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap}
+.hpill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
+
+/* Content container */
+.content{max-width:900px;padding:0 60px 80px}
+
+/* Section headers */
+.sec-head{padding:48px 60px 0;max-width:900px}
+.sec-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-num::before{content:'';display:block;width:24px;height:2px;background:var(--orange);flex-shrink:0}
+.sec-title{font-size:clamp(22px,2.8vw,32px);font-weight:800;color:var(--text);line-height:1.2;margin-bottom:6px}
+.sec-desc{font-size:14px;color:var(--text2);margin-bottom:32px;max-width:640px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:14px;transition:background .25s,border-color .25s}
+.card-head{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.card-head svg{flex-shrink:0}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+
+/* Pillar cards */
+.pil{border-radius:10px;padding:16px;border-top:4px solid}
+.pil.m{background:var(--pill-g);border-color:#1D9E75}.pil.m .ph{color:var(--pill-gt)}
+.pil.t{background:var(--pill-p);border-color:#7E57C2}.pil.t .ph{color:var(--pill-pt)}
+.pil.p{background:var(--pill-o);border-color:#D97706}.pil.p .ph{color:var(--pill-ot)}
+.pil.l{background:var(--pill-o);border-color:var(--orange)}.pil.l .ph{color:var(--pill-ot)}
+.ph{font-size:13.5px;font-weight:800;margin-bottom:8px}
+.pi{font-size:12px;color:var(--text2);display:flex;gap:6px;line-height:1.45;align-items:flex-start}
+.pi::before{content:'·';font-weight:800;flex-shrink:0;color:var(--text3)}
+
+/* Rules */
+.rules{display:flex;flex-direction:column;gap:9px}
+.rule{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--text);line-height:1.5}
+.ri{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;flex-shrink:0;margin-top:1.5px}
+.ok{background:var(--ok-bg);color:var(--ok-tx)}
+.no{background:var(--no-bg);color:var(--no-tx)}
+.sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+
+/* Code */
+.code{background:var(--codebg);border-radius:10px;padding:16px 18px;font-family:'DM Mono','Courier New',monospace;font-size:12px;color:var(--codefg);line-height:1.9;overflow-x:auto;margin-top:0}
+.k{color:#89DCEB}.v{color:#A6E3A1}.s{color:#F9E2AF}.c{color:#4A5170;font-style:italic}.r{color:#F38BA8}.n{color:#CBA6F7}
+
+/* Tags / pills */
+.tag{display:inline-block;padding:3px 11px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.tb{background:var(--pill-b);color:var(--pill-bt)}
+.tg{background:var(--pill-g);color:var(--pill-gt)}
+.tp{background:var(--pill-p);color:var(--pill-pt)}
+.to{background:var(--pill-o);color:var(--pill-ot)}
+.tr{background:var(--pill-r);color:var(--pill-rt)}
+
+/* Highlight boxes */
+.hb{border-radius:10px;padding:14px 18px}
+.hb.blue{background:var(--info-bg);border-left:4px solid var(--info-bd)}
+.hb.orange{background:var(--warn-bg);border-left:4px solid var(--warn-bd)}
+.hb.red{background:var(--no-bg);border-left:4px solid var(--no-bd)}
+.hb.green{background:var(--ok-bg);border-left:4px solid var(--ok-bd)}
+.hb-t{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px}
+.hb-b{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--surface2);font-weight:700;text-align:left;padding:9px 13px;color:var(--text2);border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;transition:background .25s}
+.tbl td{padding:8px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.tbl td.mono{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--blue)}
+.tbl td.note{font-size:12px;color:var(--text2)}
+.tbl td.req{color:#E53935;font-size:11.5px;font-weight:700}
+.tbl td.opt{color:var(--orange);font-size:11.5px;font-weight:600}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2)}
+
+/* Schema type grid */
+.stypes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.stype{border-radius:10px;padding:13px 12px;border-top:4px solid}
+.stype h4{font-size:12.5px;font-weight:800;margin-bottom:8px}
+.stype li{font-size:11px;font-family:'DM Mono',monospace;list-style:none;padding:2px 0;color:var(--text2)}
+.se{background:var(--no-bg);border-color:#E53935}.se h4{color:var(--no-tx)}
+.sb{background:var(--ok-bg);border-color:#16A34A}.sb h4{color:var(--ok-tx)}
+.ss{background:var(--pill-p);border-color:#7E57C2}.ss h4{color:var(--pill-pt)}
+.sa{background:var(--warn-bg);border-color:#D97706}.sa h4{color:var(--pill-ot)}
+.sx{background:var(--info-bg);border-color:var(--blue)}.sx h4{color:var(--info-tx)}
+
+/* Metric anatomy */
+.mname{display:flex;align-items:flex-end;gap:2px;font-family:'DM Mono',monospace;font-size:clamp(14px,2vw,21px);font-weight:600;flex-wrap:wrap;margin:12px 0 6px}
+.mp{padding:8px 10px;border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.mp span{font-size:10px;font-weight:400;font-family:'DM Sans',sans-serif;color:var(--text3);white-space:nowrap}
+.mp-sep{color:var(--text3);padding:8px 1px;font-weight:400;align-self:flex-start;padding-top:10px}
+.mp1{background:var(--info-bg);color:var(--info-tx)}
+.mp2{background:var(--ok-bg);color:var(--ok-tx)}
+.mp3{background:var(--pill-p);color:var(--pill-pt)}
+.mp4{background:var(--warn-bg);color:var(--pill-ot)}
+
+/* Base-field grid */
+.bfields{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.bf{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;transition:background .25s,border-color .25s}
+.bf-name{font-family:'DM Mono',monospace;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:4px}
+.bf-note{font-size:11.5px;color:var(--text2);line-height:1.4}
+.req-badge{font-size:10px;background:var(--no-bg);color:var(--no-tx);padding:1px 7px;border-radius:10px;display:inline-block;margin-bottom:5px}
+.opt-badge{font-size:10px;background:var(--warn-bg);color:var(--pill-ot);padding:1px 7px;border-radius:10px;display:inline-block;margin-bottom:5px}
+
+/* Flow arrow row */
+.flow-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 0}
+.fnode{padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700}
+.farrow{color:var(--text3);font-size:18px;flex-shrink:0}
+
+/* Investigation table */
+.inv-t{width:100%;border-collapse:separate;border-spacing:0 5px}
+.inv-t td{padding:9px 14px;font-size:13px;vertical-align:middle}
+.inv-t tr td:first-child{background:var(--surface2);border-radius:8px 0 0 8px;font-weight:700}
+.inv-t tr td:not(:first-child){background:var(--surface);border:1px solid var(--border)}
+.inv-t tr td:last-child{border-radius:0 8px 8px 0}
+
+/* Divider */
+hr.section-div{border:none;border-top:2px solid var(--border);margin:44px 0 0}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">Siam Chamnankit</div>
+    <div class="sb-title">Observability<br>Schema</div>
+    <div class="sb-ver">Org Standard · March 2026</div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-sec-label">Overview</div>
+    <a class="sb-link active" onclick="scrollTo('hero')"><div class="sb-dot" style="background:var(--orange)"></div>Introduction</a>
+    <a class="sb-link" onclick="scrollTo('signals')"><div class="sb-dot" style="background:var(--text3)"></div>Signal responsibilities</a>
+
+    <div class="sb-sec-label">Log Schema</div>
+    <a class="sb-link" onclick="scrollTo('log-concept')"><div class="sb-dot dot-l"></div>Concept &amp; log_type</a>
+    <a class="sb-link" onclick="scrollTo('log-base')"><div class="sb-dot dot-l"></div>Base fields</a>
+    <a class="sb-link" onclick="scrollTo('log-types')"><div class="sb-dot dot-l"></div>Type-specific fields</a>
+    <a class="sb-link" onclick="scrollTo('log-levels')"><div class="sb-dot dot-l"></div>Level guide</a>
+
+    <div class="sb-sec-label">Correlation</div>
+    <a class="sb-link" onclick="scrollTo('corr-how')"><div class="sb-dot dot-c"></div>How trace_id works</a>
+    <a class="sb-link" onclick="scrollTo('corr-workflow')"><div class="sb-dot dot-c"></div>Investigation workflow</a>
+
+    <div class="sb-sec-label">Metrics Schema</div>
+    <a class="sb-link" onclick="scrollTo('metrics-naming')"><div class="sb-dot dot-m"></div>Naming convention</a>
+    <a class="sb-link" onclick="scrollTo('metrics-catalog')"><div class="sb-dot dot-m"></div>Standard catalog</a>
+
+    <div class="sb-sec-label">Trace Schema</div>
+    <a class="sb-link" onclick="scrollTo('trace-attrs')"><div class="sb-dot dot-t"></div>Resource &amp; span attrs</a>
+    <a class="sb-link" onclick="scrollTo('trace-semantic')"><div class="sb-dot dot-t"></div>Semantic conventions</a>
+
+    <div class="sb-sec-label">Reference</div>
+    <a class="sb-link" onclick="scrollTo('identity')"><div class="sb-dot dot-s"></div>Common identity fields</a>
+    <a class="sb-link" onclick="scrollTo('fullmap')"><div class="sb-dot dot-s"></div>Full schema map</a>
+  </div>
+
+  <div class="sb-footer">
+    <div class="theme-toggle">
+      <span class="tgl-label" id="tgl-label">Light mode</span>
+      <button class="tgl-track" id="tgl-track" onclick="toggleTheme()">
+        <div class="tgl-thumb"></div>
+        <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MAIN CONTENT ── -->
+<main id="main">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero">
+    <div class="hero-bg">
+      <svg width="500" height="440" viewBox="0 0 500 440" fill="none">
+        <polygon points="250,20 460,125 460,335 250,440 40,335 40,125" stroke="currentColor" stroke-width="2"/>
+        <polygon points="250,65 420,155 420,295 250,385 80,295 80,155" stroke="currentColor" stroke-width="1.5"/>
+        <polygon points="250,110 380,188 380,262 250,340 120,262 120,188" stroke="currentColor" stroke-width="1"/>
+        <polygon points="420,0 500,45 500,135 420,180 340,135 340,45" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="hero-eyebrow">Siam Chamnankit · OpenTelemetry · March 2026</div>
+    <div class="hero-h1"><span class="o">Observability</span><br><span class="b">Schema</span> Reference</div>
+    <div class="hero-sub">Unified naming &amp; field conventions for Metrics, Traces, and Logs across all services in the organization</div>
+    <div class="hero-pills">
+      <span class="hpill tg">Metrics</span>
+      <span class="hpill tp">Traces</span>
+      <span class="hpill to">Logs</span>
+      <span class="hpill tb">Correlation</span>
+      <span class="hpill" style="background:var(--pill-r);color:var(--pill-rt)">Profiles</span>
+    </div>
+  </div>
+</section>
+
+<div class="content">
+
+<!-- SECTION: Signal Responsibilities -->
+<div id="signals">
+  <div class="sec-head" style="padding-left:0">
+    <div class="sec-num">Section 01</div>
+    <div class="sec-title">Signal Responsibilities</div>
+    <div class="sec-desc">สี่ pillars เสริมกัน ไม่ใช่แข่งกัน — แต่ละตัวมีหน้าที่ที่ตัวอื่นทำแทนไม่ได้</div>
+  </div>
+
+  <div class="g4 card" style="padding:18px">
+    <div class="pil m"><div class="ph">Metrics</div><div class="pi">Request count / rate</div><div class="pi">Error rate (4xx, 5xx)</div><div class="pi">Latency p50/p95/p99</div><div class="pi">Queue depth, CPU %</div><div class="pi">Throughput trends</div><div class="pi">Alert thresholds</div></div>
+    <div class="pil t"><div class="ph">Traces</div><div class="pi">Function call chain</div><div class="pi">Per-span duration</div><div class="pi">Cross-service flow</div><div class="pi">Where latency lives</div><div class="pi">Context propagation</div><div class="pi">Dependency map</div></div>
+    <div class="pil p"><div class="ph">Profiles</div><div class="pi">Hot functions</div><div class="pi">CPU time per call</div><div class="pi">Memory allocation</div><div class="pi">GC pressure</div><div class="pi">Flame graph</div><div class="pi">Continuous profiling</div></div>
+    <div class="pil l"><div class="ph">Logs (บทบาทใหม่)</div><div class="pi">Error detail + context</div><div class="pi">Business events</div><div class="pi">Audit / security</div><div class="pi">State changes before/after</div><div class="pi">External API payloads</div><div class="pi">"Why" narrative</div></div>
+  </div>
+
+  <div class="hb blue" style="margin-bottom:14px"><div class="hb-t">Log บอก what + why · Trace บอก where + when · Metrics บอก how often · Profiles บอก how slow</div><div class="hb-b">ไม่มี signal ที่ดีที่สุดคนเดียว — ทั้งสี่ pass the baton กัน</div></div>
+
+  <div class="card">
+    <div class="card-head">สิ่งที่ไม่ควร Log อีกต่อไป — ย้ายให้ถูก pillar</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:11.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">ย้ายไป <span class="tag tg">Metrics</span></div>
+        <div class="rules">
+          <div class="rule"><div class="ri no">✗</div><div>Request count / Error count<br><sub>http_requests_total{status="500"} ทำได้ดีกว่า</sub></div></div>
+          <div class="rule"><div class="ri no">✗</div><div>Throughput per minute<br><sub>Prometheus scrape interval แม่นกว่า log parsing</sub></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">ย้ายไป <span class="tag tp">Traces</span></div>
+        <div class="rules">
+          <div class="rule"><div class="ri no">✗</div><div>Response time / Processing time ต่อ request<br><sub>Trace บอกได้เป๊ะว่า latency อยู่ที่ span ไหน</sub></div></div>
+          <div class="rule"><div class="ri no">✗</div><div>Function A เรียก Function B<br><sub>Call chain เห็นใน trace ข้าม service ด้วย</sub></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-div">
+
+<!-- SECTION: Log Concept -->
+<div id="log-concept">
+  <div class="sec-head" style="padding-left:0;padding-top:44px">
+    <div class="sec-num">Section 02</div>
+    <div class="sec-title">Log Schema</div>
+    <div class="sec-desc">Structured JSON only — Unified format with log_type discriminator</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Concept: Base fields + log_type + type-specific fields</div>
+    <div class="hb blue" style="margin-bottom:14px"><div class="hb-b">ทุก log มี base fields เหมือนกัน — <code style="font-family:'DM Mono',monospace;font-size:11px">log_type</code> บอกว่า fields อะไรจะตามมา ไม่ต้องแยก index หลัก ยกเว้น Audit (compliance)</div></div>
+    <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--text2);border:1px solid var(--border)">Base: <code style="font-family:'DM Mono',monospace;color:var(--blue)">timestamp · level · service · version · env · trace_id · span_id · log_type · msg</code></div>
+    <div class="stypes">
+      <div class="stype se"><h4>error</h4><ul><li>error.code</li><li>error.message</li><li>error.type</li><li>error.stack</li><li>context {}</li></ul></div>
+      <div class="stype sb"><h4>business</h4><ul><li>event</li><li>entity_type</li><li>entity_id</li><li>actor_id</li><li>metadata {}</li></ul></div>
+      <div class="stype ss"><h4>state_change</h4><ul><li>entity_type</li><li>entity_id</li><li>changed_by</li><li>before {}</li><li>after {}</li><li>changed_fields</li></ul></div>
+      <div class="stype sa"><h4>audit</h4><ul><li>actor_id</li><li>action</li><li>resource_type</li><li>resource_id</li><li>result</li><li>ip_address</li></ul></div>
+      <div class="stype sx"><h4>external_call</h4><ul><li>provider</li><li>operation</li><li>result</li><li>duration_ms</li><li>provider_ref</li><li>error_code</li></ul></div>
+    </div>
+    <div class="hb red"><div class="hb-t">Audit logs</div><div class="hb-b">ต้องแยก stream — WORM policy (Write Once Read Many) + จำกัด access เฉพาะ security/compliance team เท่านั้น ใช้ Loki separate stream หรือ Elastic index แยก</div></div>
+  </div>
+</div>
+
+<!-- Base fields -->
+<div id="log-base">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Base fields — ทุก log entry ต้องมี</div>
+    <div class="bfields">
+      <div class="bf"><div class="bf-name">timestamp</div><div class="req-badge">Required</div><div class="bf-note">ISO8601 UTC · 2026-03-15T10:23:45.123Z · ไม่ใช้ Unix timestamp</div></div>
+      <div class="bf"><div class="bf-name">level</div><div class="req-badge">Required</div><div class="bf-note">error / warn / info / debug · lowercase เท่านั้น · ห้าม ERROR</div></div>
+      <div class="bf"><div class="bf-name">msg</div><div class="req-badge">Required</div><div class="bf-note">Human-readable summary · ห้าม interpolate variable ใน msg</div></div>
+      <div class="bf"><div class="bf-name">service</div><div class="req-badge">Required</div><div class="bf-note">payment-service · kebab-case · ต้องตรงกับ Trace resource</div></div>
+      <div class="bf"><div class="bf-name">version</div><div class="req-badge">Required</div><div class="bf-note">1.4.2 · semver เท่านั้น</div></div>
+      <div class="bf"><div class="bf-name">env</div><div class="req-badge">Required</div><div class="bf-note">prod / staging / dev · 3 ค่าเท่านั้น · ห้าม staging2, dev2</div></div>
+      <div class="bf" style="border:2px solid var(--orange)"><div class="bf-name">trace_id</div><div class="req-badge">Required</div><div class="bf-note"><strong>สะพานไป Trace</strong> · 128-bit hex · จาก active span context</div></div>
+      <div class="bf" style="border:2px solid var(--orange)"><div class="bf-name">span_id</div><div class="req-badge">Required</div><div class="bf-note">64-bit hex · จาก active span · drill down ใน trace</div></div>
+      <div class="bf"><div class="bf-name">log_type</div><div class="req-badge">Required</div><div class="bf-note">error / business / state_change / audit / external_call</div></div>
+      <div class="bf"><div class="bf-name">request_id</div><div class="opt-badge">Optional</div><div class="bf-note">idempotency key ถ้ามี</div></div>
+      <div class="bf"><div class="bf-name">host</div><div class="opt-badge">Optional</div><div class="bf-note">Pod / hostname · pod-abc123</div></div>
+      <div class="bf"><div class="bf-name">namespace</div><div class="opt-badge">Optional</div><div class="bf-note">k8s namespace · สำหรับ k8s deployment</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Log type examples -->
+<div id="log-types">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Type-specific fields — JSON examples</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px">
+          <span class="tag tr">error</span>
+          <table class="tbl" style="margin-top:8px">
+            <thead><tr><th>Field</th><th>Req</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">error.code</td><td class="req">R</td></tr>
+              <tr><td class="mono">error.message</td><td class="req">R</td></tr>
+              <tr><td class="mono">error.type</td><td class="req">R</td></tr>
+              <tr><td class="mono">error.stack</td><td class="opt">O</td></tr>
+              <tr><td class="mono">context.*</td><td class="opt">O</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code" style="font-size:11px">
+{ <span class="k">"log_type"</span>:<span class="s">"error"</span>,
+  <span class="k">"trace_id"</span>:<span class="s">"4bf92f3577b34da6"</span>,
+  <span class="k">"error"</span>:{
+    <span class="k">"code"</span>:    <span class="s">"insufficient_funds"</span>,
+    <span class="k">"message"</span>:<span class="s">"Card balance too low"</span>,
+    <span class="k">"type"</span>:    <span class="s">"PaymentException"</span>,
+    <span class="k">"status"</span>: <span class="v">402</span>
+  },
+  <span class="k">"context"</span>:{
+    <span class="k">"user_id"</span>:<span class="s">"u_9982"</span>,
+    <span class="k">"amount"</span>: <span class="v">5000</span>,
+    <span class="k">"currency"</span>:<span class="s">"THB"</span>
+  }
+}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px">
+          <span class="tag tg">business</span>
+          <table class="tbl" style="margin-top:8px">
+            <thead><tr><th>Field</th><th>Req</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">event</td><td class="req">R</td></tr>
+              <tr><td class="mono">entity_type</td><td class="req">R</td></tr>
+              <tr><td class="mono">entity_id</td><td class="req">R</td></tr>
+              <tr><td class="mono">actor_id</td><td class="req">R</td></tr>
+              <tr><td class="mono">metadata</td><td class="opt">O</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code" style="font-size:11px">
+{ <span class="k">"log_type"</span>:    <span class="s">"business"</span>,
+  <span class="k">"event"</span>:       <span class="s">"payment_completed"</span>,
+  <span class="k">"entity_type"</span>: <span class="s">"payment"</span>,
+  <span class="k">"entity_id"</span>:   <span class="s">"pay_abc123"</span>,
+  <span class="k">"actor_id"</span>:    <span class="s">"u_9982"</span>,
+  <span class="k">"actor_type"</span>:  <span class="s">"user"</span>,
+  <span class="k">"metadata"</span>:{
+    <span class="k">"amount"</span>:  <span class="v">5000</span>,
+    <span class="k">"currency"</span>:<span class="s">"THB"</span>
+  },
+  <span class="k">"trace_id"</span>:<span class="s">"4bf92f3577b34da6"</span>
+}</div>
+      </div>
+    </div>
+    <div class="g3">
+      <div>
+        <div style="font-size:11px;font-weight:700;margin-bottom:6px"><span class="tag tp">state_change</span></div>
+        <div class="code" style="font-size:10.5px">
+{ <span class="k">"log_type"</span>:<span class="s">"state_change"</span>,
+  <span class="k">"entity_type"</span>: <span class="s">"user"</span>,
+  <span class="k">"entity_id"</span>:   <span class="s">"u_9982"</span>,
+  <span class="k">"changed_by"</span>:  <span class="s">"admin_456"</span>,
+  <span class="k">"changed_fields"</span>:[<span class="s">"role"</span>],
+  <span class="k">"before"</span>:{<span class="k">"role"</span>:<span class="s">"viewer"</span>},
+  <span class="k">"after"</span>: {<span class="k">"role"</span>:<span class="s">"editor"</span>}
+}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;margin-bottom:6px"><span class="tag to">audit</span></div>
+        <div class="code" style="font-size:10.5px">
+{ <span class="k">"log_type"</span>:<span class="s">"audit"</span>,
+  <span class="k">"actor_id"</span>:    <span class="s">"u_9982"</span>,
+  <span class="k">"action"</span>:      <span class="s">"read"</span>,
+  <span class="k">"resource_type"</span>:<span class="s">"payment"</span>,
+  <span class="k">"resource_id"</span>: <span class="s">"pay_abc"</span>,
+  <span class="k">"result"</span>:      <span class="s">"success"</span>,
+  <span class="k">"ip_address"</span>:  <span class="s">"203.0.113.5"</span>
+}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;margin-bottom:6px"><span class="tag tb">external_call</span></div>
+        <div class="code" style="font-size:10.5px">
+{ <span class="k">"log_type"</span>:   <span class="s">"external_call"</span>,
+  <span class="k">"provider"</span>:   <span class="s">"omise"</span>,
+  <span class="k">"operation"</span>:  <span class="s">"charge"</span>,
+  <span class="k">"result"</span>:     <span class="s">"failed"</span>,
+  <span class="k">"duration_ms"</span>:<span class="v">234</span>,
+  <span class="k">"error_code"</span>: <span class="s">"insufficient_funds"</span>
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Log levels -->
+<div id="log-levels">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Log level usage guide</div>
+    <table class="tbl">
+      <thead><tr><th>Level</th><th>ใช้เมื่อ</th><th>Production volume</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tr">error</span></td><td class="note">เกิดเหตุการณ์ที่ต้องการ action ทันที + ต้องมี full context</td><td class="note" style="color:#E53935;font-weight:700">&lt; 0.1%</td><td class="note">payment_failed, db_connection_lost</td></tr>
+        <tr><td><span class="tag to">warn</span></td><td class="note">ผิดปกติแต่ยัง recover ได้ / retry สำเร็จ</td><td class="note">&lt; 1%</td><td class="note">retry_succeeded, rate_limit_near</td></tr>
+        <tr><td><span class="tag tg">info</span></td><td class="note">Business events ที่มีความหมาย เท่านั้น</td><td class="note">ปานกลาง</td><td class="note">order_placed, user_signup</td></tr>
+        <tr><td><span class="tag tb">debug</span></td><td class="note">ปิดใน prod — เปิดเฉพาะตอน debug</td><td class="note" style="color:var(--text3)">ปิดใน prod</td><td class="note">cache_miss, sql_query_plan</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="section-div">
+
+<!-- SECTION: Correlation -->
+<div id="corr-how">
+  <div class="sec-head" style="padding-left:0;padding-top:44px">
+    <div class="sec-num">Section 03</div>
+    <div class="sec-title">Trace ↔ Log Correlation</div>
+    <div class="sec-desc">trace_id คือสะพาน — inject ครั้งเดียวที่ middleware แล้ว logger แนบทุก log อัตโนมัติ</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Correlation links</div>
+    <table class="tbl" style="margin-bottom:16px">
+      <thead><tr><th>จาก</th><th>ไป</th><th>Link field</th><th>วิธีใช้</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tp">Trace span</span></td><td><span class="tag tr">Logs</span></td><td class="mono">trace_id</td><td class="note">Tempo → derived fields → Loki {trace_id="$1"}</td></tr>
+        <tr><td><span class="tag tr">Log entry</span></td><td><span class="tag tp">Trace</span></td><td class="mono">trace_id</td><td class="note">Loki → Tempo link ด้วย traceId derived field</td></tr>
+        <tr><td><span class="tag tg">Metric alert</span></td><td><span class="tag tp">Trace</span></td><td class="mono">service + time</td><td class="note">Alert annotation → Tempo explore + timestamp window</td></tr>
+        <tr><td><span class="tag tg">Metric alert</span></td><td><span class="tag tr">Logs</span></td><td class="mono">service + time</td><td class="note">Prometheus alert → Loki {service="payment-service"}</td></tr>
+      </tbody>
+    </table>
+    <div class="g2">
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:8px">Code: inject trace_id เข้า logger</div>
+        <div class="code" style="font-size:11.5px">
+<span class="c">// middleware / interceptor (ทำครั้งเดียว)</span>
+<span class="n">const</span> span = trace.getActiveSpan();
+<span class="n">const</span> ctx  = span.spanContext();
+logger.setContext({
+  <span class="k">trace_id</span>: ctx.traceId,
+  <span class="k">span_id</span>:  ctx.spanId,
+  <span class="k">service</span>:  SERVICE_NAME,
+  <span class="k">env</span>:      ENV
+});</div>
+      </div>
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:8px">Grafana config: datasource derived fields</div>
+        <div class="code" style="font-size:11.5px">
+<span class="c">// Tempo datasource</span>
+{ <span class="k">name</span>: <span class="s">"TraceID"</span>,
+  <span class="k">matcherRegex</span>: <span class="s">"trace_id=(\\w+)"</span>,
+  <span class="k">url</span>: <span class="s">"http://tempo/${__value.raw}"</span> }
+
+<span class="c">// Loki datasource</span>
+{ <span class="k">matcherRegex</span>: <span class="s">"traceId=(\\w+)"</span>,
+  <span class="k">url</span>: <span class="s">"http://tempo/${__value.raw}"</span> }</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="corr-workflow">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Investigation workflow — เริ่มที่ไหน ไปไหน</div>
+    <table class="inv-t">
+      <tbody>
+        <tr><td>User แจ้ง error</td><td><span class="tag tr">Logs</span> user_id + error</td><td><span class="tag tp">Trace</span> via trace_id</td><td><span class="tag tg">Metrics</span> ดู scope</td></tr>
+        <tr><td>Alert: error rate สูง</td><td><span class="tag tg">Metrics</span> trend</td><td><span class="tag tp">Trace</span> error spans</td><td><span class="tag tr">Logs</span> via trace_id</td></tr>
+        <tr><td>Latency สูงผิดปกติ</td><td><span class="tag tg">Metrics</span> p95/p99</td><td><span class="tag tp">Trace</span> slow spans</td><td><span class="tag to">Profiles</span> flame graph</td></tr>
+        <tr><td>ข้อมูลเปลี่ยนผิดคาด</td><td><span class="tag tr">Logs</span> state_change</td><td><span class="tag tp">Trace</span> call chain</td><td><span class="tag to">Audit logs</span></td></tr>
+        <tr><td>Third-party API fail</td><td><span class="tag tr">Logs</span> external_call</td><td><span class="tag tp">Trace</span> HTTP span</td><td><span class="tag tg">Metrics</span> p99</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="section-div">
+
+<!-- SECTION: Metrics -->
+<div id="metrics-naming">
+  <div class="sec-head" style="padding-left:0;padding-top:44px">
+    <div class="sec-num">Section 04</div>
+    <div class="sec-title">Metrics Schema</div>
+    <div class="sec-desc">Prometheus-compatible · OpenMetrics format · cardinality rules</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Naming convention: {namespace}_{subsystem}_{name}_{unit}</div>
+    <div class="mname">
+      <div class="mp mp1">payment<span>namespace</span></div><div class="mp-sep">_</div>
+      <div class="mp mp2">service<span>subsystem</span></div><div class="mp-sep">_</div>
+      <div class="mp mp3">charges<span>name</span></div><div class="mp-sep">_</div>
+      <div class="mp mp4">total<span>suffix</span></div>
+    </div>
+    <div class="g2" style="margin-top:14px">
+      <div class="rules">
+        <div class="rule"><div class="ri ok">✓</div><div>snake_case เสมอ<br><sub>payment_service_charges_total</sub></div></div>
+        <div class="rule"><div class="ri ok">✓</div><div>Counter ลงท้าย _total<br><sub>http_requests_total</sub></div></div>
+        <div class="rule"><div class="ri ok">✓</div><div>Base unit เท่านั้น — seconds ไม่ใช่ ms<br><sub>request_duration_seconds</sub></div></div>
+        <div class="rule"><div class="ri ok">✓</div><div>route เป็น template เท่านั้น<br><sub>route="/orders/{id}" ✓</sub></div></div>
+      </div>
+      <div class="rules">
+        <div class="rule"><div class="ri no">✗</div><div>Label value ใน metric name<br><sub>http_get_requests_total ← ผิด</sub></div></div>
+        <div class="rule"><div class="ri no">✗</div><div>High-cardinality label<br><sub>user_id, order_id, trace_id ← ห้าม</sub></div></div>
+        <div class="rule"><div class="ri no">✗</div><div>Actual path เป็น route<br><sub>route="/orders/12345" ← ผิด</sub></div></div>
+        <div class="rule"><div class="ri no">✗</div><div>Milliseconds เป็น unit<br><sub>ใช้ _seconds เสมอ</sub></div></div>
+      </div>
+    </div>
+    <div class="hb orange" style="margin-top:14px"><div class="hb-t">Cardinality — กฎที่สำคัญที่สุด</div><div class="hb-b">Label ทุกตัวต้องมีค่าที่ limited: method (5–8), status_code (~10), env (3) ✓ | user_id, order_id = Prometheus memory ระเบิด ✗</div></div>
+  </div>
+</div>
+
+<div id="metrics-catalog">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Standard metrics catalog — สร้าง by default ทุก service</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tb">HTTP</span></div>
+        <table class="tbl" style="margin-bottom:14px">
+          <thead><tr><th>Metric</th><th>Type</th><th>Labels</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">http_requests_total</td><td class="note">Counter</td><td class="note">method, route, status_code</td></tr>
+            <tr><td class="mono">http_request_duration_seconds</td><td class="note">Histogram</td><td class="note">method, route, status_code</td></tr>
+            <tr><td class="mono">http_active_requests</td><td class="note">Gauge</td><td class="note">method, route</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tg">Database</span></div>
+        <table class="tbl">
+          <thead><tr><th>Metric</th><th>Type</th><th>Labels</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">db_queries_total</td><td class="note">Counter</td><td class="note">operation, table, status</td></tr>
+            <tr><td class="mono">db_query_duration_seconds</td><td class="note">Histogram</td><td class="note">operation, table</td></tr>
+            <tr><td class="mono">db_connection_pool_size</td><td class="note">Gauge</td><td class="note">pool_name, state</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tp">Queue / Async</span></div>
+        <table class="tbl" style="margin-bottom:14px">
+          <thead><tr><th>Metric</th><th>Type</th><th>Labels</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">queue_messages_published_total</td><td class="note">Counter</td><td class="note">queue, topic</td></tr>
+            <tr><td class="mono">queue_messages_consumed_total</td><td class="note">Counter</td><td class="note">queue, topic, status</td></tr>
+            <tr><td class="mono">queue_depth</td><td class="note">Gauge</td><td class="note">queue, topic</td></tr>
+            <tr><td class="mono">queue_consumer_lag_seconds</td><td class="note">Gauge</td><td class="note">queue, topic, consumer_group</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag to">Business</span></div>
+        <table class="tbl">
+          <thead><tr><th>Pattern</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">{domain}_{entity}_{action}_total</td><td class="note">Counter</td></tr>
+            <tr><td class="mono">{domain}_{entity}_{value}_{unit}</td><td class="note">Histogram</td></tr>
+            <tr><td class="mono">{domain}_{entity}_active</td><td class="note">Gauge</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-div">
+
+<!-- SECTION: Trace -->
+<div id="trace-attrs">
+  <div class="sec-head" style="padding-left:0;padding-top:44px">
+    <div class="sec-num">Section 05</div>
+    <div class="sec-title">Trace Schema</div>
+    <div class="sec-desc">OpenTelemetry-compatible · W3C TraceContext propagation</div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head">Resource attributes — init ครั้งเดียว</div>
+      <table class="tbl">
+        <thead><tr><th>Attribute</th><th>Req</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">service.name</td><td class="req">R</td><td class="note">payment-service</td></tr>
+          <tr><td class="mono">service.version</td><td class="req">R</td><td class="note">1.4.2</td></tr>
+          <tr><td class="mono">service.namespace</td><td class="req">R</td><td class="note">payments</td></tr>
+          <tr><td class="mono">deployment.environment</td><td class="req">R</td><td class="note">prod</td></tr>
+          <tr><td class="mono">host.name</td><td class="req">R</td><td class="note">pod-abc123</td></tr>
+          <tr><td class="mono">k8s.pod.name</td><td class="opt">O</td><td class="note">payment-7d9f-xyz</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head">Span attributes — ทุก span</div>
+      <table class="tbl">
+        <thead><tr><th>Attribute</th><th>Req</th><th>Values</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">span.kind</td><td class="req">R</td><td class="note">SERVER/CLIENT/INTERNAL</td></tr>
+          <tr><td class="mono">span.name</td><td class="req">R</td><td class="note">POST /payments/{id}</td></tr>
+          <tr><td class="mono">span.status.code</td><td class="req">R</td><td class="note">OK / ERROR / UNSET</td></tr>
+          <tr><td class="mono">error</td><td class="opt">C*</td><td class="note">true เมื่อ ERROR</td></tr>
+          <tr><td class="mono">exception.type</td><td class="opt">C*</td><td class="note">PaymentException</td></tr>
+          <tr><td class="mono">exception.message</td><td class="opt">C*</td><td class="note">Insufficient funds</td></tr>
+        </tbody>
+      </table>
+      <div class="hb orange" style="margin-top:12px"><div class="hb-b">W3C header: <code style="font-family:'DM Mono',monospace;font-size:11px">traceparent: 00-{trace_id}-{span_id}-{flags}</code></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="trace-semantic">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Semantic conventions by span type</div>
+    <div class="g3">
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tb">HTTP Server / Client</span></div>
+        <table class="tbl">
+          <thead><tr><th>Attribute</th><th>Req</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">http.method</td><td class="req">R</td></tr>
+            <tr><td class="mono">http.route</td><td class="req">R</td></tr>
+            <tr><td class="mono">http.status_code</td><td class="req">R</td></tr>
+            <tr><td class="mono">peer.service</td><td class="req">R (client)</td></tr>
+            <tr><td class="mono">http.url</td><td class="opt">O</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tg">Database</span></div>
+        <table class="tbl">
+          <thead><tr><th>Attribute</th><th>Req</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">db.system</td><td class="req">R</td></tr>
+            <tr><td class="mono">db.name</td><td class="req">R</td></tr>
+            <tr><td class="mono">db.operation</td><td class="req">R</td></tr>
+            <tr><td class="mono">db.sql.table</td><td class="req">R</td></tr>
+            <tr><td class="mono">db.statement</td><td class="opt">O*</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:5px">*sanitize ก่อน prod</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px"><span class="tag tp">Messaging</span></div>
+        <table class="tbl">
+          <thead><tr><th>Attribute</th><th>Req</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">messaging.system</td><td class="req">R</td></tr>
+            <tr><td class="mono">messaging.destination</td><td class="req">R</td></tr>
+            <tr><td class="mono">messaging.operation</td><td class="req">R</td></tr>
+            <tr><td class="mono">messaging.message_id</td><td class="opt">O</td></tr>
+            <tr><td class="mono">messaging.consumer_group</td><td class="opt">O</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:14px">
+      <div class="rules">
+        <div class="rule"><div class="ri ok">✓</div><div>Span name: verb + noun — processPayment, chargeCard</div></div>
+        <div class="rule"><div class="ri ok">✓</div><div>Custom attr prefix ด้วย domain — <sub>payment.amount</sub></div></div>
+      </div>
+      <div class="rules">
+        <div class="rule"><div class="ri no">✗</div><div>ห้าม PII ใน attributes — user.email, card.number</div></div>
+        <div class="rule"><div class="ri no">✗</div><div>ห้าม high-cardinality ใน span name</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-div">
+
+<!-- SECTION: Reference -->
+<div id="identity">
+  <div class="sec-head" style="padding-left:0;padding-top:44px">
+    <div class="sec-num">Section 06</div>
+    <div class="sec-title">Putting It All Together</div>
+    <div class="sec-desc">Common identity fields คือ join key — ต้อง consistent ทุก signal ไม่งั้น correlation พัง</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Common identity fields</div>
+    <table class="tbl" style="margin-bottom:14px">
+      <thead><tr><th>Field (OTel)</th><th>Metrics label</th><th>Trace resource</th><th>Log field</th><th>Format</th><th>กฎ</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">service.name</td><td class="mono">service</td><td class="mono">service.name</td><td class="mono">service</td><td class="note">payment-service</td><td class="note">kebab-case เท่านั้น</td></tr>
+        <tr><td class="mono">service.version</td><td class="mono">version</td><td class="mono">service.version</td><td class="mono">version</td><td class="note">1.4.2</td><td class="note">semver เท่านั้น</td></tr>
+        <tr><td class="mono">deployment.environment</td><td class="mono">env</td><td class="mono">deployment.environment</td><td class="mono">env</td><td class="note">prod/staging/dev</td><td class="note">3 ค่าเท่านั้น</td></tr>
+        <tr><td class="mono">host.name</td><td class="mono">instance</td><td class="mono">host.name</td><td class="mono">host</td><td class="note">pod-abc123</td><td class="note">Pod/hostname</td></tr>
+        <tr><td class="mono">k8s.namespace</td><td class="mono">namespace</td><td class="mono">k8s.namespace.name</td><td class="mono">namespace</td><td class="note">payments</td><td class="note">k8s เท่านั้น</td></tr>
+      </tbody>
+    </table>
+    <div class="hb red"><div class="hb-t">ถ้า fields ไม่ตรงกัน</div><div class="hb-b"><code style="font-family:'DM Mono',monospace;font-size:11px">service="payment_service"</code> ใน Metrics แต่ <code style="font-family:'DM Mono',monospace;font-size:11px">service="payment-service"</code> ใน Log — Grafana join ไม่ติด ต้อง query พิเศษทุกครั้ง อาจ miss data ได้</div></div>
+  </div>
+</div>
+
+<div id="fullmap">
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">Full schema correlation map</div>
+    <div class="g4" style="margin-bottom:16px">
+      <div style="background:var(--pill-g);border-radius:10px;padding:14px;border-top:4px solid #1D9E75">
+        <div style="font-size:13px;font-weight:800;color:var(--pill-gt);margin-bottom:8px">Metrics</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">Format: Prometheus<br>Labels: service, env, version<br>Naming: ns_sub_name_unit<br>Counter: suffix _total<br>Cardinality: ต่ำเสมอ</div>
+      </div>
+      <div style="background:var(--pill-p);border-radius:10px;padding:14px;border-top:4px solid #7E57C2">
+        <div style="font-size:13px;font-weight:800;color:var(--pill-pt);margin-bottom:8px">Traces</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">Format: OTel OTLP<br>Propagation: W3C traceparent<br>Resource: init ครั้งเดียว<br>Span name: verb+noun<br>Sampling: tail-based</div>
+      </div>
+      <div style="background:var(--pill-o);border-radius:10px;padding:14px;border-top:4px solid var(--orange)">
+        <div style="font-size:13px;font-weight:800;color:var(--pill-ot);margin-bottom:8px">Logs</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">Format: JSON only<br>Bridge: trace_id+span_id<br>Types: 5 log_type values<br>Audit: แยก stream WORM</div>
+      </div>
+      <div style="background:var(--warn-bg);border-radius:10px;padding:14px;border-top:4px solid #D97706">
+        <div style="font-size:13px;font-weight:800;color:var(--pill-ot);margin-bottom:8px">Profiles</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">Format: pprof / JFR<br>Continuous profiling<br>Flame graph<br>CPU + Memory + GC</div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="fnode" style="background:var(--pill-g);color:var(--pill-gt)">Alert (Metrics)</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--pill-p);color:var(--pill-pt)">Error Spans (Traces)</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--pill-o);color:var(--pill-ot)">Why (Logs)</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--warn-bg);color:var(--pill-ot)">Hot Path (Profiles)</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--blueL);color:white">Fix</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--text2);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><code style="font-family:'DM Mono',monospace;font-size:11.5px">trace_id</code> = shared key ระหว่าง Trace↔Log · <code style="font-family:'DM Mono',monospace;font-size:11.5px">service.name</code> ต้องตรงกันทุก signal ทั้งสามระบบ</div>
+  </div>
+</div>
+
+</div><!-- .content -->
+</main><!-- #main -->
+
+<script>
+function scrollTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+// Intersection observer for active link
+const sections=['hero','signals','log-concept','log-base','log-types','log-levels','corr-how','corr-workflow','metrics-naming','metrics-catalog','trace-attrs','trace-semantic','identity','fullmap'];
+const linkMap={
+  'hero':0,'signals':1,'log-concept':2,'log-base':3,'log-types':4,'log-levels':5,
+  'corr-how':6,'corr-workflow':7,'metrics-naming':8,'metrics-catalog':9,
+  'trace-attrs':10,'trace-semantic':11,'identity':12,'fullmap':13
+};
+const links=document.querySelectorAll('.sb-link');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const idx=linkMap[e.target.id];
+      if(idx!==undefined){
+        links.forEach(l=>l.classList.remove('active'));
+        links[idx]?.classList.add('active');
+      }
+    }
+  });
+},{threshold:0.3,rootMargin:'-10% 0px -60% 0px'});
+sections.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('tgl-track').classList.toggle('on',!dark);
+  document.getElementById('tgl-label').textContent=dark?'Light mode':'Dark mode';
+}
+</script>
+</body>
+</html>
