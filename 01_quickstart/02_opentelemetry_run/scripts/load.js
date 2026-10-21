@@ -6,5 +6,7 @@ export const options = {
 };
 export default function () {
   http.get("http://host.docker.internal:8080/api/v1/users/1");
+  http.get("http://host.docker.internal:8000/api/v1/product");
+  http.get("http://host.docker.internal:8001/api/v1/point");
   sleep(1);
 }

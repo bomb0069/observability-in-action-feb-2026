@@ -40,6 +40,9 @@ curl http://localhost:8001/api/v1/point
 curl -X POST http://localhost:8001/api/v1/point \
   -H "Content-Type: application/json" \
   -d '{"orgId":1,"userId":1,"amount":10}'
+
+# Load test (k6) – ยิง 3 services พร้อมกัน 10 VUs นาน 30 วินาที
+docker run --rm -i grafana/k6 run - <scripts/load.js
 ```
 
 ## Explore the Signals
