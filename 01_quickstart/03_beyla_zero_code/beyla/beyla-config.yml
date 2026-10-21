@@ -3,19 +3,19 @@
 
 # Discovery configuration - what processes to instrument
 discovery:
-  services:
+  instrument:
     # Instrument Java Spring Boot service (user-service)
     - name: user-service
       open_ports: 8080
-      exe_path_regexp: "java"
+      exe_path: "*/java"
     # Instrument Go binary (store-service)
     - name: store-service
       open_ports: 8000
-      exe_path_regexp: "app"
+      exe_path: "*/app"
     # Instrument Node.js Express service (point-service)
     - name: point-service
       open_ports: 8001
-      exe_path_regexp: "node"
+      exe_path: "*/node"
 
 # OTEL trace exporter configuration
 otel_traces_export:
