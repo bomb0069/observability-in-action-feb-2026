@@ -45,7 +45,6 @@ docker compose logs -f user-service
 
 # ส่ง HTTP requests เพื่อสร้าง traces
 curl http://localhost:8080/api/v1/users/1
-curl http://localhost:8080/api/v1/users
 curl http://localhost:8080/api/v1/users/2
 
 # Load testing ด้วย k6 (optional)
@@ -58,7 +57,7 @@ docker compose down -v
 ### Endpoints
 
 - **Grafana UI**: http://localhost:3000 (login `admin` / `admin`)
-- **Spring Boot API**: http://localhost:8080/api/v1/users
+- **Spring Boot API**: http://localhost:8080/api/v1/users/{id}
 - **Actuator Metrics**: http://localhost:8080/actuator/prometheus
 - **Health Check**: http://localhost:8080/actuator/health
 - **OTLP gRPC Receiver**: localhost:4317
@@ -243,19 +242,7 @@ curl http://localhost:8080/api/v1/users/1
 # 3. SQL SELECT (~15ms)
 ```
 
-### Scenario 2: Slow Database Query
-
-```bash
-# ส่ง request ที่ get all users
-curl http://localhost:8080/api/v1/users
-
-# ใน trace จะเห็น:
-# 1. HTTP GET /api/v1/users (~200ms)
-# 2. JPA findAll (~150ms)
-# 3. SQL SELECT * FROM users (~140ms) <- slow!
-```
-
-### Scenario 3: Error Tracing
+### Scenario 2: Error Tracing
 
 ```bash
 # ส่ง request ที่ user ไม่มีอยู่
