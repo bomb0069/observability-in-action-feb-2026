@@ -29,15 +29,17 @@ docker compose down -v
 
 ```bash
 # Spring Boot user-service
-curl http://localhost:8080/api/users
+curl http://localhost:8080/api/v1/users/1
 
 # Store service (Go)
-curl http://localhost:8000/products
+curl http://localhost:8000/api/v1/product
+curl http://localhost:8000/api/v1/product/1
 
 # Point service (Node.js)
-curl -X POST http://localhost:8001/points \
+curl http://localhost:8001/api/v1/point
+curl -X POST http://localhost:8001/api/v1/point \
   -H "Content-Type: application/json" \
-  -d '{"userId":1,"points":10}'
+  -d '{"orgId":1,"userId":1,"amount":10}'
 ```
 
 ## Explore the Signals
